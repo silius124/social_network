@@ -14,3 +14,41 @@ datasource db {
 }
 
 
+model User {
+  id Int @id @default(autoincrement())
+  firstName String
+  lastName String
+  email String @unique
+  password String
+  avatarUrl String
+  createdAt DateTime @default(now())
+  posts Post[]
+  requesterUser FriendShip[] @relation("RequesterUser")
+  receierUser FriendShip[] @relation("ReceiverUser")
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  contend String?
+  imageUrl String?
+  createdAt DateTime @default(now())
+}
+
+model FriendShip {
+  id Int @id @default(autoincrement())
+  requesterId Int
+  requesterUser User @relation("RequesterUser", fields: [requesterId], references: [id])
+  receiverId Int
+  receiverUser User @relation("ReceiverUser", fields: [receiverId], references: [id])
+  status STATUS @default(pending)
+  createdAt DateTime @default(now())
+  @@unique([requesterId, receiverId])
+}
+
+enum STATUS {
+  pending
+  accepted
+  rejected
+}
