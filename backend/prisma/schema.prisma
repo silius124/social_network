@@ -25,6 +25,12 @@ model User {
   posts Post[]
   requesterUser FriendShip[] @relation("RequesterUser")
   receierUser FriendShip[] @relation("ReceiverUser")
+  comment Comment[] @relation("UserComment")
+  postLike PostLike[] @relation("UserLikeFromPost")
+  commentLike CommentLike[] @relation("UserLikeFromComment")
+  notification Notification[] @relation("Notification")
+  chat ChatParticipants[] @relation("Chat")
+  messages Message[] @relation("Messages")
 }
 
 model Post {
@@ -34,6 +40,8 @@ model Post {
   contend String?
   imageUrl String?
   createdAt DateTime @default(now())
+  comment Comment[] @relation("PostComment")
+  like PostLike[] @relation("PostLike")
 }
 
 model FriendShip {
@@ -51,4 +59,75 @@ enum STATUS {
   pending
   accepted
   rejected
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  postId Int
+  post Post @relation("PostComment", fields: [postId], references: [id])
+  userId Int
+  user User @relation("UserComment", fields: [userId], references: [id])
+  content String
+  parentCommentId Int
+  createdAt DateTime @default(now())
+  like CommentLike[]
+}
+
+model PostLike {
+  id Int @id @default(autoincrement())
+  postId Int
+  post Post @relation("PostLike", fields: [postId], references: [id])
+  userId Int
+  user User @relation("UserLikeFromPost", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model CommentLike {
+  id Int @id @default(autoincrement())
+  commentId Int
+  comment Comment @relation(fields: [commentId], references: [id])
+  userId Int
+  user User @relation("UserLikeFromComment", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  userId Int 
+  user User @relation("Notification", fields: [userId], references: [id])
+  type NotificationTypes
+  entityId Int
+  isRead Boolean
+  createdAt DateTime @default(now())
+}
+
+enum NotificationTypes {
+  inviteToFriend
+  likeToPost
+  likeToComment
+}
+
+model Chat {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  participants ChatParticipants[] @relation("Paricipants")
+  message Message[] @relation("Messages")
+}
+
+model ChatParticipants {
+  chatId Int
+  chat Chat @relation("Paricipants",fields: [chatId], references: [id])
+  userId Int
+  user User @relation("Chat", fields: [userId], references: [id])
+  @@id([chatId, userId])
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  chatId Int
+  chat Chat @relation("Messages", fields: [chatId], references: [id])
+  senderId Int
+  sender User @relation("Messages", fields: [senderId], references: [id])
+  content String
+  createdAt DateTime @default(now())
 }
