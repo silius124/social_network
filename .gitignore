@@ -24,6 +24,7 @@ prisma/migrations/
 frontend/node_modules/
 frontend/dist/
 frontend/.env*
+frontend/testfile.js
 
 # Backend
 backend/node_modules/
