@@ -20,11 +20,11 @@ model User {
   lastName String
   email String @unique
   password String
-  avatarUrl String
+  avatarUrl String?
   createdAt DateTime @default(now())
   posts Post[]
   requesterUser FriendShip[] @relation("RequesterUser")
-  receierUser FriendShip[] @relation("ReceiverUser")
+  receiverUser FriendShip[] @relation("ReceiverUser")
   comment Comment[] @relation("UserComment")
   postLike PostLike[] @relation("UserLikeFromPost")
   commentLike CommentLike[] @relation("UserLikeFromComment")
@@ -37,7 +37,7 @@ model Post {
   id Int @id @default(autoincrement())
   userId Int
   user User @relation(fields: [userId], references: [id])
-  contend String?
+  content String?
   imageUrl String?
   createdAt DateTime @default(now())
   comment Comment[] @relation("PostComment")
@@ -68,7 +68,7 @@ model Comment {
   userId Int
   user User @relation("UserComment", fields: [userId], references: [id])
   content String
-  parentCommentId Int
+  parentCommentId Int?
   createdAt DateTime @default(now())
   like CommentLike[]
 }
@@ -80,6 +80,8 @@ model PostLike {
   userId Int
   user User @relation("UserLikeFromPost", fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
 }
 
 model CommentLike {
@@ -89,6 +91,8 @@ model CommentLike {
   userId Int
   user User @relation("UserLikeFromComment", fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
 }
 
 model Notification {
