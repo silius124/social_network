@@ -1,7 +1,6 @@
 # Общие
 node_modules/
 .env
-.env.*
 dist/
 build/
 coverage/
