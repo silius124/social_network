@@ -1,14 +1,15 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /workspace/backend
+USER node
+# Устанавливаем всё нужное
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    bash \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем git (в alpine это отдельно)
-RUN apk add --no-cache git bash
-
-# Обновим npm (по желанию)
 RUN npm install -g npm@latest
 
-# НИЧЕГО не копируем — всё будет через volume
-
-# Контейнер просто живёт
 CMD ["sleep", "infinity"]
