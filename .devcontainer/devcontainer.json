@@ -1,6 +1,6 @@
 {
   "name": "Social Network (NestJS + Prisma + Postgres)",
-  "dockerComposeFile": "./backend/docker-compose.yml", // или "./backend/docker-compose.yml"
+  "dockerComposeFile": "../docker-compose.yml", // или "./backend/docker-compose.yml"
   "service": "backend",
   "workspaceFolder": "/app",
   "shutdownAction": "stopCompose",
