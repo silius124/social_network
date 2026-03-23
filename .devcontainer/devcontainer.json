@@ -1,30 +1,18 @@
 {
-  "name": "Social Network Dev (NestJS + React + Postgres)",
-
+  "name": "Social Network (NestJS + Prisma + Postgres)",
   "dockerComposeFile": "./backend/docker-compose.yml", // или "./backend/docker-compose.yml"
-
-  "service": "backend", // ← VS Code откроется внутри NestJS контейнера
-
+  "service": "backend",
   "workspaceFolder": "/app",
-
-  // Обязательно для Docker Toolbox — монтируем явно
-  "workspaceMount": "src=//c/Users/silius124/Documents/it/diplom/social-network/backend,dst=/app,type=bind,consistency=delegated",
-
   "shutdownAction": "stopCompose",
-
-  "forwardPorts": [3000, 5432, 5173], // Nest, Postgres, React
-
-  "postCreateCommand": "npm install && npx prisma generate || echo 'Prisma не найден, пропускаем'",
-
+  "postCreateCommand": "npm install && npx prisma generate",
+  "forwardPorts": [3000, 5432],
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker",
         "Prisma.prisma",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-vscode.vscode-typescript-next",
-        "eamodio.gitlens"
+        "ms-azuretools.vscode-docker"
       ]
     }
   }
