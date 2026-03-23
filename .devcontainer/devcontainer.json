@@ -2,7 +2,7 @@
   "name": "Social Network (NestJS + Prisma + Postgres)",
   "dockerComposeFile": "../docker-compose.yml", // или "./backend/docker-compose.yml"
   "service": "backend",
-  "workspaceFolder": "/app",
+  "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
   "postCreateCommand": "npm install && npx prisma generate",
   "forwardPorts": [3000, 5432],

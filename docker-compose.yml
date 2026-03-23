@@ -24,8 +24,9 @@ services:
     container_name: social-backend
     restart: unless-stopped
     volumes:
-      - ./backend:/app # hot-reload будет работать
-      - /app/node_modules # не перезаписываем node_modules
+      - .:/app # hot-reload будет работать
+      - /workspace/backend/node_modules # не перезаписываем node_modules
+    working_dir: /workspace/backend
     ports:
       - "3000:3000" # порт NestJS
     depends_on:
@@ -36,6 +37,6 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/social_db?schema=public
       - JWT_SECRET=SECRET
       - JWT_REFRESH_SECRET=SECRET
-    command: npm run start:dev # hot-reload
+    command: sh -c "npm install && npx prisma generate && npm run start:dev"
 volumes:
   postgres_data:
