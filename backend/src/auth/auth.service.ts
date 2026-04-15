@@ -29,7 +29,8 @@ export class AuthService {
         },
       });
 
-      return user;
+      const { password, ...result } = user;
+      return result;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
