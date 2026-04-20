@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
@@ -12,6 +20,15 @@ export class PostsController {
   @UseGuards(JwtGuard)
   create(@CurrentUser('userId') userId: number, @Body() dto: CreatePostDto) {
     return this.postsService.create(userId, dto);
+  }
+
+  @Post(':id/like')
+  @UseGuards(JwtGuard)
+  toggleLike(
+    @CurrentUser('userId') userId: number,
+    @Param('id', ParseIntPipe) postId: number,
+  ) {
+    return this.postsService.toggleLike(userId, postId);
   }
 
   @Get()
