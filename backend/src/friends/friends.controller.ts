@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Patch,
@@ -31,5 +32,15 @@ export class FriendsController {
     @Body('status') status: 'accepted' | 'rejected',
   ) {
     return this.friendsService.updateStatus(userId, requestId, status);
+  }
+
+  @Get()
+  getFriends(@CurrentUser('userId') userId: number) {
+    return this.friendsService.getMyFriends(userId);
+  }
+
+  @Get('pending')
+  getPending(@CurrentUser('userId') userId: number) {
+    return this.friendsService.getPendingRequest(userId);
   }
 }

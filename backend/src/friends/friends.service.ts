@@ -39,4 +39,57 @@ export class FriendsService {
       data: { status },
     });
   }
+
+  async getMyFriends(userId: number) {
+    const friends = await this.prisma.friendShip.findMany({
+      where: {
+        status: 'accepted',
+        OR: [{ requesterId: userId }, { receiverId: userId }],
+      },
+      include: {
+        requesterUser: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            firstName: true,
+            lastname: true,
+          },
+        },
+        receiverUser: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            firstName: true,
+            lastname: true,
+          },
+        },
+      },
+    });
+
+    return friends.map((rel) =>
+      rel.requesterId === userId ? rel.receiverUser : rel.requesterUser,
+    );
+  }
+
+  async getPendingRequest(userId: number) {
+    return this.prisma.friendShip.findMany({
+      where: {
+        receiverId: userId,
+        status: 'pending',
+      },
+      include: {
+        requesterUser: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            firstname: true,
+            lastname: true,
+          },
+        },
+      },
+    });
+  }
 }
