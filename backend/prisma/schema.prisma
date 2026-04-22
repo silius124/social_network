@@ -111,6 +111,7 @@ enum NotificationTypes {
   inviteToFriend
   likeToPost
   likeToComment
+  acceptInviteToFriend
 }
 
 model Chat {

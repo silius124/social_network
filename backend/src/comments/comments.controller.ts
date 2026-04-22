@@ -22,6 +22,15 @@ export class CommentsController {
     return this.commentsService.create(userId, dto);
   }
 
+  @Post(':id/like')
+  @UseGuards(JwtGuard)
+  toggleLike(
+    @CurrentUser('userId') userId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ) {
+    this.commentsService.toggleLike(userId, commentId);
+  }
+
   @Get('post/:postId')
   getByPost(@Param('postId', ParseIntPipe) postId: number) {
     return this.commentsService.findByPost(postId);

@@ -1,22 +1,38 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { NotFoundError } from 'rxjs';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FriendsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationsService,
+  ) {}
 
   async sendRequest(requesterId: number, receiverId: number) {
     if (requesterId === receiverId) {
       throw new ConflictException('You cannot friend yourself');
     }
 
-    return await this.prisma.friendShip.create({
+    const friendShip = await this.prisma.friendShip.create({
       data: {
         requesterId,
         receiverId,
         status: 'pending',
       },
     });
+
+    await this.notificationService.create(
+      receiverId,
+      'inviteToFriend',
+      friendShip.id,
+    );
+
+    return friendShip;
   }
 
   async updateStatus(
@@ -31,13 +47,23 @@ export class FriendsService {
     });
 
     if (!request || request.receiverId !== receiverId) {
-      throw new NotFoundError('Friend request not found');
+      throw new NotFoundException('Friend request not found');
     }
 
-    return this.prisma.friendShip.update({
+    const updatedFriendShip = await this.prisma.friendShip.update({
       where: { id: requestId },
       data: { status },
     });
+
+    if (status === 'accepted') {
+      await this.notificationService.create(
+        request?.requesterId,
+        'acceptInviteToFriend',
+        requestId,
+      );
+    }
+
+    return updatedFriendShip;
   }
 
   async getMyFriends(userId: number) {

@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/posts.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PostsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationService: NotificationsService,
+  ) {}
 
   async create(userId: number, dto: CreatePostDto) {
     return this.prisma.post.create({
@@ -46,9 +51,21 @@ export class PostsService {
       return { liked: false };
     }
 
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+      select: { userId: true },
+    });
+
+    if (!post) throw new NotFoundException('Post not found');
+
     await this.prisma.postLike.create({
       data: { postId, userId },
     });
+
+    if (post?.userId !== userId) {
+      await this.notificationService.create(userId, 'likeToPost', postId);
+    }
+
     return { liked: true };
   }
 }

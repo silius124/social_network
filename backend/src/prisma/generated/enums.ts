@@ -21,7 +21,8 @@ export type STATUS = (typeof STATUS)[keyof typeof STATUS]
 export const NotificationTypes = {
   inviteToFriend: 'inviteToFriend',
   likeToPost: 'likeToPost',
-  likeToComment: 'likeToComment'
+  likeToComment: 'likeToComment',
+  acceptInviteToFriend: 'acceptInviteToFriend'
 } as const
 
 export type NotificationTypes = (typeof NotificationTypes)[keyof typeof NotificationTypes]
