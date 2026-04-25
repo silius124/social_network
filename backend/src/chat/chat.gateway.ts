@@ -27,6 +27,7 @@ export class ChatGateway {
     console.log(`Client disconnect: ${client.id}`);
   }
 
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinRoom')
   handleJoinRoom(
     @MessageBody() data: { chatId: string },
@@ -36,6 +37,7 @@ export class ChatGateway {
     return { event: 'joined', room: `chat_${data.chatId}` };
   }
 
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('sendMessage')
   async handleMessage(
     @MessageBody() data: { chatId: number; content: string },
