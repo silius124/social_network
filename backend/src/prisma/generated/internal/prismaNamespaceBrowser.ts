@@ -60,7 +60,7 @@ export const ModelName = {
   Notification: 'Notification',
   Chat: 'Chat',
   ChatParticipants: 'ChatParticipants',
-  Message: 'Message'
+  Messages: 'Messages'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -175,7 +175,7 @@ export const ChatParticipantsScalarFieldEnum = {
 export type ChatParticipantsScalarFieldEnum = (typeof ChatParticipantsScalarFieldEnum)[keyof typeof ChatParticipantsScalarFieldEnum]
 
 
-export const MessageScalarFieldEnum = {
+export const MessagesScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
   senderId: 'senderId',
@@ -183,7 +183,7 @@ export const MessageScalarFieldEnum = {
   createdAt: 'createdAt'
 } as const
 
-export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+export type MessagesScalarFieldEnum = (typeof MessagesScalarFieldEnum)[keyof typeof MessagesScalarFieldEnum]
 
 
 export const SortOrder = {

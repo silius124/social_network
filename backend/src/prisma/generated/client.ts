@@ -83,7 +83,7 @@ export type Chat = Prisma.ChatModel
  */
 export type ChatParticipants = Prisma.ChatParticipantsModel
 /**
- * Model Message
+ * Model Messages
  * 
  */
-export type Message = Prisma.MessageModel
+export type Messages = Prisma.MessagesModel

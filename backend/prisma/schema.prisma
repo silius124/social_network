@@ -32,7 +32,7 @@ model User {
   commentLike CommentLike[] @relation("UserLikeFromComment")
   notification Notification[] @relation("Notification")
   chat ChatParticipants[] @relation("Chat")
-  messages Message[] @relation("Messages")
+  messages Messages[] @relation("Messages")
 }
 
 model Post {
@@ -118,7 +118,7 @@ model Chat {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   participants ChatParticipants[] @relation("Paricipants")
-  message Message[] @relation("Messages")
+  message Messages[] @relation("Messages")
 }
 
 model ChatParticipants {
@@ -129,7 +129,7 @@ model ChatParticipants {
   @@id([chatId, userId])
 }
 
-model Message {
+model Messages {
   id Int @id @default(autoincrement())
   chatId Int
   chat Chat @relation("Messages", fields: [chatId], references: [id])
