@@ -8,6 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsJwtGuard } from './guard/ws-jwt.guard';
+import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -18,6 +19,8 @@ import { WsJwtGuard } from './guard/ws-jwt.guard';
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
+
+  constructor(private chatService: ChatService) {}
 
   handleConnection(client: Socket) {
     console.log(`Client conncted: ${client.id}`);
@@ -34,6 +37,10 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
   ) {
     client.join(`chat_${data.chatId}`);
+
+    const history = await this.chatService.getMessages(data.chatId);
+    client.emit('chatHistory', history);
+
     return { event: 'joined', room: `chat_${data.chatId}` };
   }
 
@@ -43,10 +50,14 @@ export class ChatGateway {
     @MessageBody() data: { chatId: number; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    this.server.to(`chat_${data.chatId}`).emit('newMessage', {
-      content: data.content,
-      senderId: client.data.user.userId,
-      createdAt: new Date(),
-    });
+    const senderId = client.data.user.userId;
+
+    const message = await this.chatService.saveMessage(
+      senderId,
+      data.chatId,
+      data.content,
+    );
+
+    this.server.to(`chat_${data.chatId}`).emit('newMessage', message);
   }
 }
