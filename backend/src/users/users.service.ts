@@ -64,4 +64,29 @@ export class UsersService {
       take: 10,
     });
   }
+
+  async updateProfile(
+    userId: number,
+    dto: { firstname?: string; lastname?: string; avatarUrl?: string },
+  ) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: dto,
+      select: {
+        id: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        avatarUrl: true,
+      },
+    });
+  }
+
+  async deleteAccount(userId: number) {
+    return this.prisma.user.delete({
+      where: { id: userId },
+    });
+  }
 }
