@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -34,5 +35,14 @@ export class PostsController {
   @Get()
   findAll() {
     return this.postsService.findAll();
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtGuard)
+  deletePost(
+    @CurrentUser('userId') userId: number,
+    @Param('id', ParseIntPipe) postId: number,
+  ) {
+    return this.postsService.deletePost(userId, postId);
   }
 }

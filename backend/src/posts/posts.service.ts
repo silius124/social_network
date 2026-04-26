@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/posts.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PostsService {
@@ -67,5 +70,21 @@ export class PostsService {
     }
 
     return { liked: true };
+  }
+
+  async deletePost(userId: number, postId: number) {
+    const post = await this.prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) throw new NotFoundException('Post not found');
+    if (post.userId !== userId)
+      throw new ForbiddenException('You can only delete your own posts');
+
+    return this.prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
   }
 }
