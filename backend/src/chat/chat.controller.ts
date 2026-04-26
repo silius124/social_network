@@ -23,4 +23,12 @@ export class ChatController {
   getMessages(@Param('id', ParseIntPipe) chatId: number) {
     return this.chatService.getMessages(chatId);
   }
+
+  @Get('find/:friendId')
+  findChat(
+    @CurrentUser('userId') userId: number,
+    @Param('friendId', ParseIntPipe) friendId: number,
+  ) {
+    return this.chatService.findExisitingChat(userId, friendId);
+  }
 }
