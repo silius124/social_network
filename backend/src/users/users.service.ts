@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { NotFoundError } from 'rxjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -7,7 +6,7 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async getProfile(username: string) {
-    const user = this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         username,
       },
@@ -38,6 +37,31 @@ export class UsersService {
       include: {
         _count: { select: { like: true, comment: true } },
       },
+    });
+  }
+
+  async searchUsers(query: string, currentUserId: number) {
+    return this.prisma.user.findMany({
+      where: {
+        AND: [
+          { id: { not: currentUserId } },
+          {
+            OR: [
+              { username: { contains: query, mode: 'insensitive' } },
+              { firstName: { contains: query, mode: 'insensitive' } },
+              { lastName: { contains: query, mode: 'insensitive' } },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        avatarUrl: true,
+      },
+      take: 10,
     });
   }
 }

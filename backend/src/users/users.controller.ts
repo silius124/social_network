@@ -1,5 +1,14 @@
-import { Controller, Get, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -13,5 +22,11 @@ export class UsersController {
   @Get(':id/posts')
   getPosts(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getUserPosts(id);
+  }
+
+  @Get('search')
+  @UseGuards(JwtGuard)
+  search(@Query('q') query: string, @CurrentUser('userId') userId: number) {
+    return this.usersService.searchUsers(query, userId);
   }
 }
