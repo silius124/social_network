@@ -32,8 +32,8 @@ export class ChatGateway {
 
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(
-    @MessageBody() data: { chatId: string },
+  async handleJoinRoom(
+    @MessageBody() data: { chatId: number },
     @ConnectedSocket() client: Socket,
   ) {
     client.join(`chat_${data.chatId}`);
@@ -47,17 +47,26 @@ export class ChatGateway {
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('sendMessage')
   async handleMessage(
-    @MessageBody() data: { chatId: number; content: string },
+    @MessageBody()
+    data: { chatId?: number; friendId?: number; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const senderId = client.data.user.userId;
+    const senderId: number = client.data.user.userId as number;
 
     const message = await this.chatService.saveMessage(
       senderId,
-      data.chatId,
       data.content,
+      data.chatId,
+      data.friendId,
     );
 
+    const roomId = `chat_${message.chatId}`;
+    client.join(roomId);
+
     this.server.to(`chat_${data.chatId}`).emit('newMessage', message);
+
+    if (!data.chatId) {
+      client.emit('chatCreated', { chatId: message.chatId });
+    }
   }
 }

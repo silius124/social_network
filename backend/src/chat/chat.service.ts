@@ -5,27 +5,55 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async getOrCreateChat(userId: number, friendId: number) {
-    const existingChat = await this.prisma.chat.findFirst({
+  async findExisitingChat(userId: number, friendId: number) {
+    return this.prisma.chat.findFirst({
       where: {
-        participants: { every: { userId: { in: [userId, friendId] } } },
-      },
-    });
-
-    if (existingChat) return existingChat;
-
-    return this.prisma.chat.create({
-      data: {
         participants: {
-          create: [{ userId: userId }, { userId: friendId }],
+          every: { userId: { in: [userId, friendId] } },
         },
       },
     });
   }
 
-  async saveMessage(userId: number, chatId: number, content: string) {
-    return this.prisma.message.create({
-      data: { content, chatId, userId },
+  // async getOrCreateChat(userId: number, friendId: number) {
+  //   const existingChat = await this.prisma.chat.findFirst({
+  //     where: {
+  //       participants: { every: { userId: { in: [userId, friendId] } } },
+  //     },
+  //   });
+
+  //   if (existingChat) return existingChat;
+
+  //   return this.prisma.chat.create({
+  //     data: {
+  //       participants: {
+  //         create: [{ userId: userId }, { userId: friendId }],
+  //       },
+  //     },
+  //   });
+  // }
+
+  async saveMessage(
+    userId: number,
+    content: string,
+    chatId?: number,
+    friendId?: number,
+  ) {
+    let targetChatId = chatId;
+
+    if (!targetChatId && friendId) {
+      const chat = await this.prisma.chat.create({
+        data: {
+          participants: {
+            create: [{ userId: userId }, { userId: friendId }],
+          },
+        },
+      });
+      targetChatId = chat.id;
+    }
+
+    return this.prisma.messages.create({
+      data: { content, chatId: targetChatId, senderId: userId },
       include: {
         user: { select: { username: true, avatarUrl: true } },
       },
@@ -33,7 +61,7 @@ export class ChatService {
   }
 
   async getMessages(chatId: number) {
-    return this.prisma.chat.findMany({
+    return this.prisma.messages.findMany({
       where: { chatId },
       orderBy: { createdAt: 'asc' },
       include: {
