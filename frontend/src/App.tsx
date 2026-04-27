@@ -1,15 +1,9 @@
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
     <>
-      <Input />
-      <Input />
-      <Input />
-      <Input />
-      <Input />
-      <Button className="w-4"></Button>
+      <RegisterPage />
     </>
   );
 }
