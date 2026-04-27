@@ -39,11 +39,13 @@ function RegisterForm() {
   const serverErrorMessage = (error as any)?.response?.data?.message;
 
   return (
-    <div>
-      <div>
-        <h2>Регистрация</h2>
-        {serverErrorMessage && <div>{serverErrorMessage}</div>}
-      </div>
+    <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg border border-slate-200">
+      <h2 className="text-2xl font-bold mb-6 text-center">Регистрация</h2>
+      {serverErrorMessage && (
+        <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 border border-destructive/20 text-sm">
+          {serverErrorMessage}
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -118,7 +120,11 @@ function RegisterForm() {
               )}
             />
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting}
+            >
               {isPending ? "Регистрация" : "Зарегистрироваться"}
             </Button>
           </div>
