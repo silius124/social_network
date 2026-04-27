@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: social_db_hulk
       POSTGRES_DB: social_db
     ports:
       - "5432:5432"
@@ -32,6 +32,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - ./backend/.env
     environment:
       - PORT=${PORT}
       - DATABASE_URL=${DATABASE_URL}
