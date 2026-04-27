@@ -13,7 +13,7 @@ await (async function bootstrap() {
   app.use(helmet());
 
   app.enableCors({
-    origin: 'http://localhost:3002',
+    origin: 'http://localhost:5173',
     credentials: true,
   });
 
@@ -25,5 +25,5 @@ await (async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3002);
+  await app.listen(process.env.PORT ?? 3000);
 })();
