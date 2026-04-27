@@ -34,10 +34,12 @@ export class ChatService {
       targetChatId = chat.id;
     }
 
+    if (!targetChatId) throw new Error('Chat ID is required');
+
     return this.prisma.messages.create({
       data: { content, chatId: targetChatId, senderId: userId },
       include: {
-        user: { select: { username: true, avatarUrl: true } },
+        sender: { select: { username: true, avatarUrl: true } },
       },
     });
   }
@@ -47,7 +49,7 @@ export class ChatService {
       where: { chatId },
       orderBy: { createdAt: 'asc' },
       include: {
-        user: { select: { username: true, avatarUrl: true } },
+        sender: { select: { username: true, avatarUrl: true } },
       },
     });
   }

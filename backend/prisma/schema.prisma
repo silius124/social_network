@@ -116,7 +116,7 @@ model Chat {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   participants ChatParticipants[] @relation("Paricipants")
-  message Messages[] @relation("Messages")
+  messages Messages[] @relation("Messages")
 }
 
 model ChatParticipants {

@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import { join } from 'path';
 import * as express from 'express';
 
-await (async function bootstrap() {
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
@@ -25,5 +25,7 @@ await (async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
-})();
+  await app.listen(3000);
+}
+
+bootstrap();

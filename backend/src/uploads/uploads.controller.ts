@@ -18,9 +18,9 @@ export class UploadsController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads',
-        filename: (req, res, cb) => {
+        filename: (req, file, cb) => {
           const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.round() * 1e9);
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
           cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
         },
       }),

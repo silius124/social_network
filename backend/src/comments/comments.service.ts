@@ -26,14 +26,14 @@ export class CommentsService {
   async toggleLike(userId: number, commentId: number) {
     const existingLike = await this.prisma.commentLike.findUnique({
       where: {
-        commentId_userId: [commentId, userId],
+        commentId_userId: { commentId: commentId, userId: userId },
       },
     });
 
     if (existingLike) {
       await this.prisma.commentLike.delete({
         where: {
-          commentId_userId: [commentId, userId],
+          commentId_userId: { commentId: commentId, userId: userId },
         },
       });
       return { liked: false };

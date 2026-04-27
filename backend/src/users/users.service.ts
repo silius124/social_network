@@ -13,12 +13,12 @@ export class UsersService {
       select: {
         id: true,
         username: true,
-        firstname: true,
-        lastname: true,
+        firstName: true,
+        lastName: true,
         avatarUrl: true,
         createdAt: true,
         _count: {
-          select: { post: true, requesterUser: true, receiverUser: true },
+          select: { posts: true, requesterUser: true, receiverUser: true },
         },
       },
     });
