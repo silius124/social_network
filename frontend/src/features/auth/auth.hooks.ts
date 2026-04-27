@@ -14,7 +14,7 @@ export const useRegisterMutation = () => {
       return response.data;
     },
     onSuccess: (data, variables) => {
-      setAuth(data.success_token, data.user || { email: variables.email });
+      setAuth(data.access_token, data.user || { email: variables.email });
     },
   });
 };
