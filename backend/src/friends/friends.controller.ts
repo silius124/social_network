@@ -27,7 +27,7 @@ export class FriendsController {
 
   @Patch('respond/:id')
   respond(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('id', ParseIntPipe) requestId: number,
     @Body('status') status: 'accepted' | 'rejected',
   ) {
@@ -35,12 +35,12 @@ export class FriendsController {
   }
 
   @Get()
-  getFriends(@CurrentUser('userId') userId: number) {
+  getFriends(@CurrentUser('id') userId: number) {
     return this.friendsService.getMyFriends(userId);
   }
 
   @Get('pending')
-  getPending(@CurrentUser('userId') userId: number) {
+  getPending(@CurrentUser('id') userId: number) {
     return this.friendsService.getPendingRequest(userId);
   }
 }

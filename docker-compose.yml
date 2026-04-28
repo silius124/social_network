@@ -25,7 +25,8 @@ services:
     restart: unless-stopped
     volumes:
       - .:/workspace:cached
-      - /workspace/backend/node_modules #
+      - /workspace/backend/node_modules
+      - uploads_data:/workspace/backend/uploads
     working_dir: /workspace/backend
     ports:
       - "3000:3000"
@@ -58,3 +59,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:

@@ -30,19 +30,19 @@ export class UsersController {
 
   @Get('search')
   @UseGuards(JwtGuard)
-  search(@Query('q') query: string, @CurrentUser('userId') userId: number) {
+  search(@Query('q') query: string, @CurrentUser('id') userId: number) {
     return this.usersService.searchUsers(query, userId);
   }
 
   @Patch('me')
   @UseGuards(JwtGuard)
-  updateMe(@CurrentUser('userId') userId: number, @Body() dto: UpdateUserDto) {
+  updateMe(@CurrentUser('id') userId: number, @Body() dto: UpdateUserDto) {
     return this.usersService.updateProfile(userId, dto);
   }
 
   @Delete('me')
   @UseGuards(JwtGuard)
-  deleteMe(@CurrentUser('userId') userId: number) {
+  deleteMe(@CurrentUser('id') userId: number) {
     return this.usersService.deleteAccount(userId);
   }
 }

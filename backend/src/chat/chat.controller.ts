@@ -15,7 +15,7 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Get()
-  getChats(@CurrentUser('userId') userId: number) {
+  getChats(@CurrentUser('id') userId: number) {
     return this.chatService.getMyChats(userId);
   }
 
@@ -26,7 +26,7 @@ export class ChatController {
 
   @Get('find/:friendId')
   findChat(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('friendId', ParseIntPipe) friendId: number,
   ) {
     return this.chatService.findExisitingChat(userId, friendId);

@@ -25,7 +25,7 @@ export class CommentsController {
   @Post(':id/like')
   @UseGuards(JwtGuard)
   toggleLike(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
   ) {
     this.commentsService.toggleLike(userId, commentId);

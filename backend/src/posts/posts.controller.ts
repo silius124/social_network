@@ -19,14 +19,14 @@ export class PostsController {
 
   @Post()
   @UseGuards(JwtGuard)
-  create(@CurrentUser('userId') userId: number, @Body() dto: CreatePostDto) {
+  create(@CurrentUser('id') userId: number, @Body() dto: CreatePostDto) {
     return this.postsService.create(userId, dto);
   }
 
   @Post(':id/like')
   @UseGuards(JwtGuard)
   toggleLike(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('id', ParseIntPipe) postId: number,
   ) {
     return this.postsService.toggleLike(userId, postId);
@@ -40,7 +40,7 @@ export class PostsController {
   @Delete(':id')
   @UseGuards(JwtGuard)
   deletePost(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('id', ParseIntPipe) postId: number,
   ) {
     return this.postsService.deletePost(userId, postId);
