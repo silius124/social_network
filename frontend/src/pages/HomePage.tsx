@@ -1,4 +1,5 @@
-import PostCard from "@/features/posts/PostCard";
+import CreatePostForm from "@/features/posts/components/CreatePostForm";
+import PostCard from "@/features/posts/components/PostCard";
 import { usePosts } from "@/features/posts/posts.hooks";
 
 function HomePage() {
@@ -7,6 +8,7 @@ function HomePage() {
   if (isLoading) return <div className="text-center">Загрузка постов...</div>;
   return (
     <div className="max-w-2xl mx-auto">
+      <CreatePostForm />
       {posts?.length > 0 ? (
         posts.map((post: any) => <PostCard key={post.id} post={post} />)
       ) : (
