@@ -13,12 +13,11 @@ function CreatePostForm() {
 
   const handleSubmit = () => {
     if (!content && !file) return;
-    console.log(content, file);
     mutate(
       { content, file: file || undefined },
       {
         onSuccess: () => {
-          setContent(content);
+          setContent("");
           setFile(null);
         },
       },
@@ -26,7 +25,7 @@ function CreatePostForm() {
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="my-6">
       <CardContent className="pt-6 space-y-4">
         <Textarea
           placeholder="Что у вас нового?"
