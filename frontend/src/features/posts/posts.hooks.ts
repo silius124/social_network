@@ -20,7 +20,6 @@ export const useCreatePost = () => {
         formData.append("file", file);
         const uploadRes = await api.post("/uploads/image", formData);
         imageUrl = uploadRes.data.url;
-        console.log(imageUrl);
       }
 
       const response = await api.post("/posts", { content, imageUrl });

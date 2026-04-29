@@ -7,7 +7,7 @@ function HomePage() {
 
   if (isLoading) return <div className="text-center">Загрузка постов...</div>;
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto px-3">
       <CreatePostForm />
       {posts?.length > 0 ? (
         posts.map((post: any) => <PostCard key={post.id} post={post} />)
