@@ -27,8 +27,9 @@ export const useAuthStore = create<AuthState>()(
       isAuth: false,
       setAuth: async (token) => {
         try {
+          set({ token: token });
           const { data } = await api.get("/auth/me");
-          set({ token: token, user: data, isAuth: true });
+          set({ user: data, isAuth: true });
         } catch {
           set({ token: null, user: null, isAuth: false });
         }

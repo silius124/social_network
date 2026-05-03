@@ -29,8 +29,8 @@ export const useLoginMutation = () => {
       const response = await api.post("/auth/login", data);
       return response.data;
     },
-    onSuccess: (data) => {
-      setAuth(data.access_token);
+    onSuccess: async (data) => {
+      await setAuth(data.access_token);
     },
   });
 };
