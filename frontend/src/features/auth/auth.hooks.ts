@@ -21,7 +21,7 @@ export const useRegisterMutation = () => {
   });
 };
 
-export const useLoginrMutation = () => {
+export const useLoginMutation = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({

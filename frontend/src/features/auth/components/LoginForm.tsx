@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useLoginrMutation } from "../auth.hooks";
+import { useLoginMutation } from "../auth.hooks";
 import { loginSchema } from "../auth.schema";
 import type z from "zod";
 import {
@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 function LoginForm() {
-  const { mutate, isPending, error } = useLoginrMutation();
+  const { mutate, isPending, error } = useLoginMutation();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
