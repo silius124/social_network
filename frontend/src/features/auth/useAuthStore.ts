@@ -17,7 +17,6 @@ interface AuthState {
   isAuth: boolean;
   setAuth: (token: string) => void;
   logout: () => void;
-  checkAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -26,19 +25,16 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       isAuth: false,
-      setAuth: (token) => {
-        set({ token });
-      },
-      logout: () => {
-        set({ token: null, user: null, isAuth: false });
-      },
-      checkAuth: async () => {
+      setAuth: async (token) => {
         try {
           const { data } = await api.get("/auth/me");
-          set({ user: data, isAuth: true });
+          set({ token: token, user: data, isAuth: true });
         } catch {
           set({ token: null, user: null, isAuth: false });
         }
+      },
+      logout: () => {
+        set({ token: null, user: null, isAuth: false });
       },
     }),
     { name: "auth-storage", storage: createJSONStorage(() => localStorage) },

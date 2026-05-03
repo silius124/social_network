@@ -8,7 +8,6 @@ type RegisterInput = z.infer<typeof registerSchema>;
 type LoginInput = z.infer<typeof loginSchema>;
 
 export const useRegisterMutation = () => {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
   const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({
@@ -18,14 +17,12 @@ export const useRegisterMutation = () => {
     },
     onSuccess: (data) => {
       setAuth(data.access_token);
-      checkAuth();
     },
   });
 };
 
 export const useLoginrMutation = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
-  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   return useMutation({
     mutationFn: async (data: LoginInput) => {
@@ -34,7 +31,6 @@ export const useLoginrMutation = () => {
     },
     onSuccess: (data) => {
       setAuth(data.access_token);
-      checkAuth();
     },
   });
 };
