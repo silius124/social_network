@@ -35,6 +35,7 @@ function LoginForm() {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     mutate(values, {
       onSuccess: () => {
+        console.log("dqdw");
         navigate("/", { replace: true });
       },
     });

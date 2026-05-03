@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/features/auth/useAuthStore";
-import { Navigate, Outlet } from "react-router-dom";
+import { Link, Navigate, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
 
 function MainLayout() {
@@ -16,15 +16,15 @@ function MainLayout() {
           <div className="flex items-center gap-8">
             <h1 className="text-xl font-bold text-primaryq">Nodix</h1>
             <nav className="hidden md:flex gap-4 text-sm font-medium">
-              <a href="/" className="hover:text-primary">
+              <Link to="/" className="hover:text-primary">
                 Лента
-              </a>
-              <a href="/friends" className="hover:text-primary">
+              </Link>
+              <Link to="/friends" className="hover:text-primary">
                 Друзья
-              </a>
-              <a href="/message" className="hover:text-primary">
+              </Link>
+              <Link to="/message" className="hover:text-primary">
                 Сообщения
-              </a>
+              </Link>
             </nav>
           </div>
 

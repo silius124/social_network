@@ -31,6 +31,32 @@ export const useCreatePost = () => {
   });
 };
 
+export const useToggleLikePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (postId: number) => {
+      const { data } = await api.post(`/posts/${postId}/like`);
+      return data;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+
+export const useDeletePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (postId: number) => {
+      const { data } = await api.delete(`/posts/${postId}`);
+      return data;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+
 async function getAll() {
   const response = await api.get("posts");
   return response.data;

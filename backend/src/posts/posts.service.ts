@@ -30,9 +30,12 @@ export class PostsService {
           select: {
             id: true,
             username: true,
+            firstName: true,
+            lastName: true,
             avatarUrl: true,
           },
         },
+        like: true,
       },
       orderBy: { createdAt: 'desc' },
     });

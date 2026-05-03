@@ -41,6 +41,7 @@ function RegisterForm() {
     mutate(values, {
       onSuccess: () => {
         alert("Регистрация завершена");
+
         navigate("/login", { replace: true });
       },
     });

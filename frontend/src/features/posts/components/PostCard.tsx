@@ -1,7 +1,21 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { Heart, Trash2Icon } from "lucide-react";
+import { useDeletePost, useToggleLikePost } from "../posts.hooks";
+import { useAuthStore } from "@/features/auth/useAuthStore";
 
 function PostCard({ post }: { post: any }) {
+  const { user } = useAuthStore();
+  const { mutate: deletePost } = useDeletePost();
+  const { mutate: toggleLikePost } = useToggleLikePost();
+  const isAuthor = post.userId === user?.id;
+  const isLiked = post.like?.some((like: any) => like.userId === user?.id);
   return (
     <Card className="mb-4">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
@@ -17,6 +31,16 @@ function PostCard({ post }: { post: any }) {
           </span>
           <span className="text-xs text-slate-500">@{post.user?.username}</span>
         </div>
+        {isAuthor && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-slate-400 hover:text-destructive"
+            onClick={() => deletePost(post.id)}
+          >
+            <Trash2Icon className="h-4 w-4" />
+          </Button>
+        )}
       </CardHeader>
 
       <CardContent className="p-4 pt-0">
@@ -29,6 +53,18 @@ function PostCard({ post }: { post: any }) {
           />
         )}
       </CardContent>
+
+      <CardFooter>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`gap-2 ${isLiked ? "text-red-500 hover:text-red-600" : "text-slate-500"}`}
+          onClick={() => toggleLikePost(post.id)}
+        >
+          <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
+          <span>{post.like?.length || 0}</span>
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

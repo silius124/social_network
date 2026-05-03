@@ -7,6 +7,7 @@ type RegisterInput = z.infer<typeof registerSchema>;
 type LoginInput = z.infer<typeof loginSchema>;
 
 export const useRegisterMutation = () => {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
   const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({
@@ -14,22 +15,25 @@ export const useRegisterMutation = () => {
       const response = await api.post("/auth/register", data);
       return response.data;
     },
-    onSuccess: (data, variables) => {
-      setAuth(data.access_token, data.user || { email: variables.email });
+    onSuccess: (data) => {
+      setAuth(data.access_token);
+      checkAuth();
     },
   });
 };
 
 export const useLoginrMutation = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   return useMutation({
     mutationFn: async (data: LoginInput) => {
       const response = await api.post("/auth/login", data);
       return response.data;
     },
-    onSuccess: (data, variables) => {
-      setAuth(data.access_token, data.user || { email: variables.email });
+    onSuccess: (data) => {
+      setAuth(data.access_token);
+      checkAuth();
     },
   });
 };
