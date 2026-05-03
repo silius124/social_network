@@ -25,7 +25,7 @@ function CreatePostForm() {
   };
 
   return (
-    <Card className="my-6">
+    <Card className="mt-6">
       <CardContent className="pt-6 space-y-4">
         <Textarea
           placeholder="Что у вас нового?"

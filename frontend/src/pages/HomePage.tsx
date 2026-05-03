@@ -1,3 +1,4 @@
+import { SkeletonPost } from "@/components/Skeletons";
 import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
 import { usePosts } from "@/features/posts/posts.hooks";
@@ -5,7 +6,13 @@ import { usePosts } from "@/features/posts/posts.hooks";
 function HomePage() {
   const { data: posts, isLoading } = usePosts();
 
-  if (isLoading) return <div className="text-center">Загрузка постов...</div>;
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto px-3">
+        <SkeletonPost />
+      </div>
+    );
+  }
   return (
     <div className="max-w-2xl mx-auto px-3">
       <CreatePostForm />

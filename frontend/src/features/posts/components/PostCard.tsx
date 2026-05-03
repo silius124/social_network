@@ -17,7 +17,7 @@ function PostCard({ post }: { post: any }) {
   const isAuthor = post.userId === user?.id;
   const isLiked = post.like?.some((like: any) => like.userId === user?.id);
   return (
-    <Card className="mb-4">
+    <Card className="my-4">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar>
           <AvatarImage src={post.user?.avatarUrl} />
