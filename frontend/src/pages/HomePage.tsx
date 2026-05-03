@@ -1,3 +1,4 @@
+import { Container } from "@/components/Container";
 import { SkeletonPost } from "@/components/Skeletons";
 import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
@@ -8,13 +9,14 @@ function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto px-3">
+      <Container>
         <SkeletonPost />
-      </div>
+        <SkeletonPost />
+      </Container>
     );
   }
   return (
-    <div className="max-w-2xl mx-auto px-3">
+    <Container>
       <CreatePostForm />
       {posts?.length > 0 ? (
         posts.map((post: any) => <PostCard key={post.id} post={post} />)
@@ -23,7 +25,7 @@ function HomePage() {
           Постов пока нет. Будьте первым!
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 
