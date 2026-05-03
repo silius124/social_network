@@ -29,7 +29,12 @@ function MainLayout() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600">{user?.username}</span>
+            <Button
+              variant={"ghost"}
+              className="text-sm text-slate-600 hover:text-primary"
+            >
+              <Link to={"/profile"}>{user?.username}</Link>
+            </Button>
             <Button
               onClick={logout}
               className="bg-destructive/20 text-destructive/50 border border-destructive/40 hover:bg-destructive hover:text-white"

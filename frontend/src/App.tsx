@@ -3,6 +3,7 @@ import MainLayout from "./components/Layout/MainLayout";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/profile" element={<div>Профиль</div>} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

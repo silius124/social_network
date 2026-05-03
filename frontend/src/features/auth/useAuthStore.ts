@@ -4,6 +4,7 @@ import { api } from "@/api/api";
 
 interface User {
   id: number;
+  avatarUrl?: string;
   email: string;
   password: string;
   username: string;
