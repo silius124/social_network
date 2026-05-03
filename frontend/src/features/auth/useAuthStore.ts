@@ -35,7 +35,6 @@ export const useAuthStore = create<AuthState>()(
       checkAuth: async () => {
         try {
           const { data } = await api.get("/auth/me");
-          console.log(data);
           set({ user: data, isAuth: true });
         } catch {
           set({ token: null, user: null, isAuth: false });
