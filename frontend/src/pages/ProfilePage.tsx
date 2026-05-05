@@ -2,6 +2,7 @@ import { Container } from "@/components/Container";
 import { SkeletonPost } from "@/components/Skeletons";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/features/auth/useAuthStore";
+import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
 import { usePosts } from "@/features/posts/posts.hooks";
 import EditProfileModal from "@/features/profile/components/EditProfileModal";
@@ -54,7 +55,9 @@ function ProfilePage() {
         </CardContent>
       </Card>
 
-      <div className="space-y-4">
+      <CreatePostForm />
+
+      <div className="space-y-4 mt-4">
         <h3 className="font-semibold text-lg text-slate-800 px-1">
           Мои публикации
         </h3>
