@@ -16,11 +16,15 @@ function PostCard({ post }: { post: any }) {
   const { mutate: toggleLikePost } = useToggleLikePost();
   const isAuthor = post.userId === user?.id;
   const isLiked = post.like?.some((like: any) => like.userId === user?.id);
+  console.log(post.user?.avatarUrl);
   return (
     <Card className="my-4">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar>
-          <AvatarImage src={post.user?.avatarUrl} />
+          <AvatarImage
+            src={`http://localhost:3000${post.user?.avatarUrl}`}
+            className="w-10 h-10 rounded-full object-cover"
+          />
           <AvatarFallback>
             {post.user?.username[0].toUpperCase()}
           </AvatarFallback>

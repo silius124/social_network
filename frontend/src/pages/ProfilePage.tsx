@@ -1,12 +1,11 @@
 import { Container } from "@/components/Container";
 import { SkeletonPost } from "@/components/Skeletons";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import PostCard from "@/features/posts/components/PostCard";
 import { usePosts } from "@/features/posts/posts.hooks";
+import EditProfileModal from "@/features/profile/components/EditProfileModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Settings } from "lucide-react";
 
 function ProfilePage() {
   const { user } = useAuthStore();
@@ -22,6 +21,7 @@ function ProfilePage() {
             <Avatar className="w-24 h-24 border-2 border-primary/10 rounded-full flex items-center justify-center bg-primary/5">
               <AvatarImage
                 src={`${user?.avatarUrl ? `http://localhost:3000${user?.avatarUrl}` : ""}`}
+                className="w-full h-full object-cover"
               />
               <AvatarFallback className="text-2xl text-primary ">
                 {user?.username?.[0].toUpperCase()}
@@ -49,10 +49,7 @@ function ProfilePage() {
                 </div>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Settings className="h-4 w-4" />
-              Редактировать
-            </Button>
+            <EditProfileModal />
           </div>
         </CardContent>
       </Card>

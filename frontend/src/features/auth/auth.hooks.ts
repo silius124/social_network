@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import type { loginSchema, registerSchema } from "./auth.schema";
+import { type loginSchema, type registerSchema } from "./auth.schema";
 import { useAuthStore } from "./useAuthStore";
 import { api } from "@/api/api";
 import type z from "zod";

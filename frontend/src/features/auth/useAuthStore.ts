@@ -1,6 +1,8 @@
 import { createJSONStorage, persist } from "zustand/middleware";
 import { create } from "zustand";
 import { api } from "@/api/api";
+import type z from "zod";
+import type { updateProfileSchema } from "../profile/profile.schema";
 
 interface User {
   id: number;
@@ -17,12 +19,13 @@ interface AuthState {
   user: User | null;
   isAuth: boolean;
   setAuth: (token: string) => void;
+  updateProfile: (data: z.infer<typeof updateProfileSchema>) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: null,
       user: null,
       isAuth: false,
@@ -33,6 +36,12 @@ export const useAuthStore = create<AuthState>()(
           set({ user: data, isAuth: true });
         } catch {
           set({ token: null, user: null, isAuth: false });
+        }
+      },
+      updateProfile: async (data) => {
+        const currentUser = get().user;
+        if (currentUser) {
+          set({ user: { ...currentUser, ...data } });
         }
       },
       logout: () => {
