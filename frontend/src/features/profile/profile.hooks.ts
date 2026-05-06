@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../auth/useAuthStore";
 import { api } from "@/api/api";
 import type z from "zod";
@@ -19,5 +19,17 @@ export const useUpdateProfle = () => {
 
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
+  });
+};
+
+export const useSearchUsers = (query: string) => {
+  return useQuery({
+    queryKey: ["users", "search", query],
+    queryFn: async () => {
+      if (!query) return [];
+      const { data } = await api.get(`/users/search?q=${query}`);
+      return data;
+    },
+    enabled: query.length > 0,
   });
 };
