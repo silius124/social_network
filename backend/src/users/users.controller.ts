@@ -18,16 +18,6 @@ import { UpdateUserDto } from './dto/update.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':username')
-  getProfile(@Param('username') username: string) {
-    return this.usersService.getProfile(username);
-  }
-
-  @Get(':id/posts')
-  getPosts(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.getUserPosts(id);
-  }
-
   @Get('search')
   @UseGuards(JwtGuard)
   search(@Query('q') query: string, @CurrentUser('id') userId: number) {
@@ -44,5 +34,15 @@ export class UsersController {
   @UseGuards(JwtGuard)
   deleteMe(@CurrentUser('id') userId: number) {
     return this.usersService.deleteAccount(userId);
+  }
+
+  @Get(':username')
+  getProfile(@Param('username') username: string) {
+    return this.usersService.getProfile(username);
+  }
+
+  @Get(':id/posts')
+  getPosts(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUserPosts(id);
   }
 }
