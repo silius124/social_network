@@ -36,6 +36,16 @@ export class UsersService {
       },
       include: {
         _count: { select: { like: true, comment: true } },
+        user: {
+          select: {
+            username: true,
+            avatarUrl: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        like: true,
+        comment: true,
       },
     });
   }

@@ -8,6 +8,16 @@ export const usePosts = () => {
   });
 };
 
+export const useUserPosts = (userId: number) => {
+  return useQuery({
+    queryKey: ["posts", "users", userId],
+    queryFn: async () => {
+      const { data } = await api.get(`/users/${userId}/posts`);
+      return data;
+    },
+  });
+};
+
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 

@@ -22,6 +22,16 @@ export const useUpdateProfle = () => {
   });
 };
 
+export const useUsersProfile = (username: string) => {
+  return useQuery({
+    queryKey: ["user", username],
+    queryFn: async () => {
+      const { data } = await api.get(`/users/${username}`);
+      return data;
+    },
+  });
+};
+
 export const useSearchUsers = (query: string) => {
   return useQuery({
     queryKey: ["users", "search", query],

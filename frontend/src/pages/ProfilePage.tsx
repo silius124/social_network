@@ -1,18 +1,31 @@
 import { Container } from "@/components/Container";
 import { SkeletonPost } from "@/components/Skeletons";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
-import { usePosts } from "@/features/posts/posts.hooks";
+import { useUserPosts } from "@/features/posts/posts.hooks";
 import EditProfileModal from "@/features/profile/components/EditProfileModal";
+import { useUsersProfile } from "@/features/profile/profile.hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { useParams } from "react-router-dom";
 
 function ProfilePage() {
-  const { user } = useAuthStore();
-  const { data: allPosts, isLoading } = usePosts();
+  const { username } = useParams<{ username: string }>();
+  const { user: currentUser } = useAuthStore();
+  const { data: user, isLoading: userLoading } = useUsersProfile(
+    username || "",
+  );
+  const { data: userPosts, isLoading: postLoading } = useUserPosts(user?.id);
 
-  const userPosts = allPosts?.filter((post: any) => post.userId === user?.id);
+  const isMyProfile = currentUser?.username === username;
+
+  if (userLoading)
+    return <div className="text-center p-10">Загрузка профиля...</div>;
+
+  if (!user)
+    return <div className="text-center p-10">Пользователь не найден</div>;
 
   return (
     <Container>
@@ -42,7 +55,7 @@ function ProfilePage() {
               <div className="flex justify-center md:justify-start gap-6 mt-4">
                 <div className="text-center">
                   <span className="block font-bold text-lg">
-                    {userPosts?.length || 0}{" "}
+                    {user?._count.posts}
                   </span>
                   <span className="text-xs text-slate-500 uppercase tracking-wider">
                     Постов
@@ -50,24 +63,30 @@ function ProfilePage() {
                 </div>
               </div>
             </div>
-            <EditProfileModal />
+            <div className="mt-4">
+              {isMyProfile ? (
+                <EditProfileModal />
+              ) : (
+                <Button>Добавить в друзья</Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <CreatePostForm />
+      {isMyProfile && <CreatePostForm />}
 
       <div className="space-y-4 mt-4">
         <h3 className="font-semibold text-lg text-slate-800 px-1">
           Мои публикации
         </h3>
-        {isLoading && (
+        {postLoading && (
           <>
             <SkeletonPost />
             <SkeletonPost />
           </>
         )}
-        {!isLoading && userPosts && userPosts.length > 0 ? (
+        {!postLoading && userPosts && userPosts.length > 0 ? (
           userPosts.map((post: any) => <PostCard key={post.id} post={post} />)
         ) : (
           <Card className="border-dashed shadow-none bg-transparent">

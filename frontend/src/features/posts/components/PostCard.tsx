@@ -15,8 +15,8 @@ function PostCard({ post }: { post: any }) {
   const { mutate: deletePost } = useDeletePost();
   const { mutate: toggleLikePost } = useToggleLikePost();
   const isAuthor = post.userId === user?.id;
-  const isLiked = post.like?.some((like: any) => like.userId === user?.id);
-  console.log(post.user?.avatarUrl);
+  const isLiked = post?.like?.some((like: any) => like.userId === user?.id);
+
   return (
     <Card className="my-4">
       <CardHeader className="flex flex-row items-center gap-3 p-4">
@@ -66,7 +66,7 @@ function PostCard({ post }: { post: any }) {
           onClick={() => toggleLikePost(post.id)}
         >
           <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
-          <span>{post.like?.length || 0}</span>
+          <span>{post._count.like}</span>
         </Button>
       </CardFooter>
     </Card>

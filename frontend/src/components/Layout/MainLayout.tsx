@@ -35,7 +35,7 @@ function MainLayout() {
               variant={"ghost"}
               className="text-sm text-slate-600 hover:text-primary"
             >
-              <Link to={"/profile"}>{user?.username}</Link>
+              <Link to={`/profile/${user?.username}`}>{user?.username}</Link>
             </Button>
             <Button
               onClick={logout}

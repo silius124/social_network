@@ -35,7 +35,9 @@ export class PostsService {
             avatarUrl: true,
           },
         },
+        _count: { select: { like: true, comment: true } },
         like: true,
+        comment: true,
       },
       orderBy: { createdAt: 'desc' },
     });
