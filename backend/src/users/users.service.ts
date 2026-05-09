@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getProfile(username: string) {
+  async getProfile(id: number, username: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         username,
@@ -25,7 +25,20 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    const friendShip = await this.prisma.friendShip.findFirst({
+      where: {
+        OR: [
+          { requesterId: id, receiverId: user.id },
+          { requesterId: user.id, receiverId: id },
+        ],
+      },
+      select: {
+        status: true,
+      },
+    });
+    if (friendShip) return { ...user, ...friendShip };
+
+    return { ...user };
   }
 
   async getUserPosts(userId: number) {

@@ -37,8 +37,11 @@ export class UsersController {
   }
 
   @Get(':username')
-  getProfile(@Param('username') username: string) {
-    return this.usersService.getProfile(username);
+  getProfile(
+    @CurrentUser('id') userId: number,
+    @Param('username') username: string,
+  ) {
+    return this.usersService.getProfile(userId, username);
   }
 
   @Get(':id/posts')
