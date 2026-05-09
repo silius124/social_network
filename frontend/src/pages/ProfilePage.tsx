@@ -7,13 +7,12 @@ import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
 import { useUserPosts } from "@/features/posts/posts.hooks";
 import EditProfileModal from "@/features/profile/components/EditProfileModal";
+import { useUsersProfile } from "@/features/profile/profile.hooks";
 import {
   useRespondToRequest,
   useSendFriendRequest,
-  useUsersProfile,
-} from "@/features/profile/profile.hooks";
+} from "@/features/friends/friends.hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 type FriendShip = "pending" | "accepted" | "rejected";
