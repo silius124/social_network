@@ -7,9 +7,16 @@ import CreatePostForm from "@/features/posts/components/CreatePostForm";
 import PostCard from "@/features/posts/components/PostCard";
 import { useUserPosts } from "@/features/posts/posts.hooks";
 import EditProfileModal from "@/features/profile/components/EditProfileModal";
-import { useUsersProfile } from "@/features/profile/profile.hooks";
+import {
+  useRespondToRequest,
+  useSendFriendRequest,
+  useUsersProfile,
+} from "@/features/profile/profile.hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+type FriendShip = "pending" | "accepted" | "rejected";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -18,6 +25,10 @@ function ProfilePage() {
     username || "",
   );
   const { data: userPosts, isLoading: postLoading } = useUserPosts(user?.id);
+  const { mutate: sendRequest, isPending: isSendingRequest } =
+    useSendFriendRequest();
+  const { mutate: respondToRequest, isPending: isSendingRespond } =
+    useRespondToRequest();
 
   const isMyProfile = currentUser?.username === username;
 
@@ -27,6 +38,41 @@ function ProfilePage() {
   if (!user)
     return <div className="text-center p-10">Пользователь не найден</div>;
 
+  const iAmRequester = user.requesterId === currentUser?.id;
+
+  const friendActionConfig = {
+    pending: iAmRequester
+      ? { label: "Ожидание подтверждения", disabled: true, action: () => {} }
+      : {
+          label: "Принять заявку",
+          disabled: false,
+          action: () => {
+            respondToRequest({
+              requestId: user.friendShipId,
+              status: "accepted",
+            });
+          },
+        },
+    accepted: {
+      label: "Написать сообщение",
+      disabled: false,
+      action: () => {},
+    },
+    rejected: {
+      label: "Добавить в друзья",
+      disabled: false,
+      action: () => {
+        sendRequest(user.id);
+      },
+    },
+  } satisfies Record<
+    string,
+    { label: string; disabled: boolean; action: () => void }
+  >;
+
+  const config = user.status
+    ? friendActionConfig[user.status]
+    : { label: "Добавить в друзья", disabled: false, action: () => {} };
   return (
     <Container>
       <Card className="my-8 border-none shadow-sm bg-white">
@@ -67,7 +113,16 @@ function ProfilePage() {
               {isMyProfile ? (
                 <EditProfileModal />
               ) : (
-                <Button>Добавить в друзья</Button>
+                <Button
+                  onClick={config.action}
+                  disabled={
+                    config.disabled || isSendingRequest || isSendingRespond
+                  }
+                >
+                  {isSendingRequest && isSendingRespond && !user.status
+                    ? "Отправка..."
+                    : config.label}
+                </Button>
               )}
             </div>
           </div>

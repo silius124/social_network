@@ -19,7 +19,7 @@ export class FriendsController {
 
   @Post('request/:id')
   sendRequest(
-    @CurrentUser('userId') userId: number,
+    @CurrentUser('id') userId: number,
     @Param('id', ParseIntPipe) receiverId: number,
   ) {
     return this.friendsService.sendRequest(userId, receiverId);

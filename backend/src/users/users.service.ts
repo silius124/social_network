@@ -34,11 +34,16 @@ export class UsersService {
       },
       select: {
         status: true,
+        requesterId: true,
+        id: true,
       },
     });
-    if (friendShip) return { ...user, ...friendShip };
+    if (friendShip) {
+      const { id: friendShipId, ...friendShipRest } = friendShip;
+      return { ...user, ...friendShipRest, friendShipId };
+    }
 
-    return { ...user };
+    return user;
   }
 
   async getUserPosts(userId: number) {

@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import SearchPage from "./pages/SearchPage";
+import FriendPage from "./pages/FriendPage";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           <Route path="/profile/:username" element={<ProfilePage />} />
 
           <Route path="/search" element={<SearchPage />} />
+
+          <Route path="/friends" element={<FriendPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
