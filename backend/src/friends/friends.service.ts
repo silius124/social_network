@@ -18,7 +18,24 @@ export class FriendsService {
       throw new ConflictException('You cannot friend yourself');
     }
 
-    const friendShip = await this.prisma.friendShip.create({
+    const friendShip = await this.prisma.friendShip.findFirst({
+      where: {
+        AND: [
+          {
+            OR: [
+              { requesterId: requesterId, receiverId: receiverId },
+              { requesterId: receiverId, receiverId: requesterId },
+            ],
+          },
+          { status: 'rejected' },
+        ],
+      },
+    });
+    if (friendShip) {
+      await this.delete(friendShip.id);
+    }
+
+    const createfriendShip = await this.prisma.friendShip.create({
       data: {
         requesterId,
         receiverId,
@@ -29,10 +46,10 @@ export class FriendsService {
     await this.notificationService.create(
       receiverId,
       'inviteToFriend',
-      friendShip.id,
+      createfriendShip.id,
     );
 
-    return friendShip;
+    return createfriendShip;
   }
 
   async updateStatus(
@@ -123,7 +140,7 @@ export class FriendsService {
     return this.prisma.friendShip.delete({
       where: {
         id,
-        status: 'accepted',
+        OR: [{ status: 'accepted' }, { status: 'rejected' }],
       },
     });
   }
