@@ -9,6 +9,7 @@ import { useUserPosts } from "@/features/posts/posts.hooks";
 import EditProfileModal from "@/features/profile/components/EditProfileModal";
 import { useUsersProfile } from "@/features/profile/profile.hooks";
 import {
+  useDeleteFriendShip,
   useRespondToRequest,
   useSendFriendRequest,
 } from "@/features/friends/friends.hook";
@@ -28,6 +29,7 @@ function ProfilePage() {
     useSendFriendRequest();
   const { mutate: respondToRequest, isPending: isSendingRespond } =
     useRespondToRequest();
+  const { mutate: deleteFriendShip } = useDeleteFriendShip();
 
   const isMyProfile = currentUser?.username === username;
 
@@ -53,9 +55,11 @@ function ProfilePage() {
           },
         },
     accepted: {
-      label: "Написать сообщение",
+      label: "Удалить из друзей",
       disabled: false,
-      action: () => {},
+      action: () => {
+        deleteFriendShip(user.friendShipId);
+      },
     },
     rejected: {
       label: "Добавить в друзья",
@@ -71,7 +75,13 @@ function ProfilePage() {
 
   const config = user.status
     ? friendActionConfig[user.status]
-    : { label: "Добавить в друзья", disabled: false, action: () => {} };
+    : {
+        label: "Добавить в друзья",
+        disabled: false,
+        action: () => {
+          sendRequest(user.id);
+        },
+      };
   return (
     <Container>
       <Card className="my-8 border-none shadow-sm bg-white">
@@ -117,6 +127,8 @@ function ProfilePage() {
                   disabled={
                     config.disabled || isSendingRequest || isSendingRespond
                   }
+                  variant={user.status === "accepted" ? "destructive" : ""}
+                  className={`${user.status === "accepted" ? "bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white" : ""}`}
                 >
                   {isSendingRequest && isSendingRespond && !user.status
                     ? "Отправка..."

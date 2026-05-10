@@ -39,7 +39,7 @@ function MainLayout() {
             </Button>
             <Button
               onClick={logout}
-              className="bg-destructive/20 text-destructive/50 border border-destructive/40 hover:bg-destructive hover:text-white"
+              className="bg-destructive/20 text-destructive/60 border border-destructive/60 hover:bg-destructive hover:text-white"
             >
               Выйти
             </Button>

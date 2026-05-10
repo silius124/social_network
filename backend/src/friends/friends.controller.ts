@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -42,5 +43,10 @@ export class FriendsController {
   @Get('pending')
   getPending(@CurrentUser('id') userId: number) {
     return this.friendsService.getPendingRequest(userId);
+  }
+
+  @Delete(':id')
+  deleteFriendShip(@Param('id', ParseIntPipe) id: number) {
+    return this.friendsService.delete(id);
   }
 }

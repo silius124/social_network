@@ -118,4 +118,13 @@ export class FriendsService {
       },
     });
   }
+
+  async delete(id: number) {
+    return this.prisma.friendShip.delete({
+      where: {
+        id,
+        status: 'accepted',
+      },
+    });
+  }
 }
