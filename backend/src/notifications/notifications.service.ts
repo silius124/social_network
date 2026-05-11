@@ -13,9 +13,21 @@ export class NotificationsService {
   }
 
   async getMyNotification(userId: number) {
-    return this.prisma.notification.findMany({
+    const notifications = await this.prisma.notification.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
+    });
+    const countUnread = await this.prisma.notification.count({
+      where: { isRead: false },
+    });
+
+    return { notifications: [...notifications], countUnread: countUnread };
+  }
+
+  async readNotification(notifId: number) {
+    return this.prisma.notification.update({
+      where: { id: notifId },
+      data: { isRead: true },
     });
   }
 }

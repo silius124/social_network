@@ -2,6 +2,7 @@ import { useAuthStore } from "@/features/auth/useAuthStore";
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
 import GlobalSearch from "../GlobalSearch";
+import NotificationBell from "@/features/notifications/components/NotificationBell";
 
 function MainLayout() {
   const { isAuth, logout, user } = useAuthStore();
@@ -31,6 +32,7 @@ function MainLayout() {
           </div>
 
           <div className="flex items-center gap-4">
+            <NotificationBell />
             <Button
               variant={"ghost"}
               className="text-sm text-slate-600 hover:text-primary"
