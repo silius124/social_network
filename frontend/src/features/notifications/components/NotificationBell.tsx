@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import type { Notification } from "@/types/types";
 
 function NotificationBell() {
   const { data: notifications } = useNotifications();
@@ -37,7 +38,7 @@ function NotificationBell() {
         </DialogHeader>
         <div className="space-y-4 max-h-[400px] overflow-y-auto">
           {notifications?.notifications.length > 0 ? (
-            notifications.notifications.map((notification: any) => (
+            notifications.notifications.map((notification: Notification) => (
               <div
                 key={notification.id}
                 className={`p-3 rounded-lg border ${notification.isRead ? "bg-white" : "bg-slate-50 border-primary/20"}`}

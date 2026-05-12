@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRespondToRequest } from "@/features/friends/friends.hook";
+import type { PendingRequest, User } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
@@ -32,7 +33,7 @@ function FriendPage() {
           <section>
             <h2 className="text-xl">Заявки в друзья ({requests.length})</h2>
             <div className="grid gap-4">
-              {requests.map((req: any) => (
+              {requests.map((req: PendingRequest) => (
                 <Card key={req.id}>
                   <CardContent className="p-4 flex items-center justify-between">
                     <Link
@@ -86,8 +87,8 @@ function FriendPage() {
           <h2 className="text-xl font-bold mb-4">Мои друзья</h2>
           {friends?.length > 0 ? (
             <div>
-              {friends.map((friend: any) => (
-                <Card key={friend.key}>
+              {friends.map((friend: User) => (
+                <Card key={friend.id}>
                   <CardContent className="p-4 flex items-center gap-3">
                     <Avatar>
                       <AvatarImage

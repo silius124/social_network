@@ -1,7 +1,7 @@
 import { api } from "@/api/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-interface Comment {
+interface CommentCreate {
   content: string;
   postId: number;
 }
@@ -20,7 +20,7 @@ export const useCreateComment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (comment: Comment) => {
+    mutationFn: async (comment: CommentCreate) => {
       const { data } = await api.post("comments", comment);
       return data;
     },

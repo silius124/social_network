@@ -11,14 +11,17 @@ import { useDeletePost, useToggleLikePost } from "../posts.hooks";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import CommentSection from "@/features/comments/components/CommentSection";
 import { useState } from "react";
+import type { Post, PostLike } from "@/types/types";
 
-function PostCard({ post }: { post: any }) {
+function PostCard({ post }: { post: Post }) {
   const [showComments, setShowComments] = useState<boolean>(false);
   const { user } = useAuthStore();
   const { mutate: deletePost } = useDeletePost();
   const { mutate: toggleLikePost } = useToggleLikePost();
   const isAuthor = post.userId === user?.id;
-  const isLiked = post?.like?.some((like: any) => like.userId === user?.id);
+  const isLiked = post?.like?.some(
+    (like: PostLike) => like.userId === user?.id,
+  );
 
   return (
     <>

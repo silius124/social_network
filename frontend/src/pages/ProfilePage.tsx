@@ -15,8 +15,7 @@ import {
 } from "@/features/friends/friends.hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useParams } from "react-router-dom";
-
-type FriendShip = "pending" | "accepted" | "rejected";
+import type { Post } from "@/types/types";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -74,7 +73,7 @@ function ProfilePage() {
   >;
 
   const config = user.status
-    ? friendActionConfig[user.status]
+    ? friendActionConfig[user.status as keyof typeof friendActionConfig]
     : {
         label: "Добавить в друзья",
         disabled: false,
@@ -127,7 +126,7 @@ function ProfilePage() {
                   disabled={
                     config.disabled || isSendingRequest || isSendingRespond
                   }
-                  variant={user.status === "accepted" ? "destructive" : ""}
+                  variant={user.status === "accepted" && "destructive"}
                   className={`${user.status === "accepted" ? "bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white" : ""}`}
                 >
                   {isSendingRequest && isSendingRespond && !user.status
@@ -153,7 +152,7 @@ function ProfilePage() {
           </>
         )}
         {!postLoading && userPosts && userPosts.length > 0 ? (
-          userPosts.map((post: any) => <PostCard key={post.id} post={post} />)
+          userPosts.map((post: Post) => <PostCard key={post.id} post={post} />)
         ) : (
           <Card className="border-dashed shadow-none bg-transparent">
             <CardContent className="py-12 text-center text-slate-400">

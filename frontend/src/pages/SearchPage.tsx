@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useSearchUsers } from "@/features/profile/profile.hooks";
+import type { User } from "@/types/types";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -33,7 +34,7 @@ function SearchPage() {
             <p className="text-center text-slate-500">Загрузка...</p>
           )}
 
-          {users?.map((user: any) => (
+          {users?.map((user: User) => (
             <Link key={user.id} to={`/profile/${user.username}`}>
               <Card className="hover:bg-slate-50 transition-colors cursor-pointer mb-2">
                 <CardContent className="p-4 flex items-center gap-4">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import type { Comment } from "@/types/types";
 
 function CommentSection({ postId }: { postId: number }) {
   const [content, setContent] = useState<string>();
@@ -45,7 +46,7 @@ function CommentSection({ postId }: { postId: number }) {
           {isLoading ? (
             <p className="text-xs text-slate-400">Загрузка...</p>
           ) : (
-            comments?.map((comment: any) => (
+            comments?.map((comment: Comment) => (
               <div
                 key={comment.id}
                 className="flex gap-2 items-start text-sm bg-slate-100 p-2 rounded-lg"
