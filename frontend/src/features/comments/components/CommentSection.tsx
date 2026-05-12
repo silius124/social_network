@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 function CommentSection({ postId }: { postId: number }) {
   const [content, setContent] = useState<string>();
@@ -45,22 +46,29 @@ function CommentSection({ postId }: { postId: number }) {
             <p className="text-xs text-slate-400">Загрузка...</p>
           ) : (
             comments?.map((comment: any) => (
-              <div key={comment.id} className="flex gap-2 text-sm">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage
-                    src={`http://localhost:3000${comment?.user?.avatarUrl}`}
-                  />
-                  <AvatarFallback>
-                    {comment?.user?.username[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="bg-slate-100 p-2 rounded-lg flex-1">
-                  <p className="font-semibold text-xs mb-1">
-                    {comment?.user?.firstName} {comment?.user?.lastName}
-                  </p>
-                  <p className="font-semibold text-xs mb-1">
-                    @{comment?.user?.username}
-                  </p>
+              <div
+                key={comment.id}
+                className="flex gap-2 items-start text-sm bg-slate-100 p-2 rounded-lg"
+              >
+                <Link to={`profile/${comment?.user?.username}`}>
+                  <Avatar className="h-7 w-7">
+                    <AvatarImage
+                      src={`http://localhost:3000${comment?.user?.avatarUrl}`}
+                    />
+                    <AvatarFallback>
+                      {comment?.user?.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+                <div className="  flex-1">
+                  <Link to={`profile/${comment?.user?.username}`}>
+                    <p className="font-semibold text-xs mb-1">
+                      {comment?.user?.firstName} {comment?.user?.lastName}
+                    </p>
+                    <p className="text-xs mb-1 text-slate-500">
+                      @{comment?.user?.username}
+                    </p>
+                  </Link>
                   <p>{comment.content}</p>
                 </div>
               </div>
