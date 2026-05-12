@@ -18,7 +18,7 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  create(@CurrentUser('userId') userId: number, @Body() dto: CreateCommentDto) {
+  create(@CurrentUser('id') userId: number, @Body() dto: CreateCommentDto) {
     return this.commentsService.create(userId, dto);
   }
 
@@ -28,7 +28,7 @@ export class CommentsController {
     @CurrentUser('id') userId: number,
     @Param('commentId', ParseIntPipe) commentId: number,
   ) {
-    this.commentsService.toggleLike(userId, commentId);
+    return this.commentsService.toggleLike(userId, commentId);
   }
 
   @Get('post/:postId')

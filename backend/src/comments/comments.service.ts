@@ -70,6 +70,8 @@ export class CommentsService {
       include: {
         user: {
           select: {
+            firstName: true,
+            lastName: true,
             username: true,
             avatarUrl: true,
           },

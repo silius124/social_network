@@ -24,9 +24,9 @@ function NotificationBell() {
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {notifications.countUnread > 0 && (
+          {notifications?.countUnread > 0 && (
             <span className="absolute top-1 right-1 bg-destructive text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
-              {notifications.countUnread}
+              {notifications?.countUnread}
             </span>
           )}
         </Button>
