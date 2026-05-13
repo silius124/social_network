@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import SearchPage from "./pages/SearchPage";
 import FriendPage from "./pages/FriendPage";
+import MessagesPage from "./pages/MessagesPage";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
 
           <Route path="/friends" element={<FriendPage />} />
+
+          <Route path="/message" element={<MessagesPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

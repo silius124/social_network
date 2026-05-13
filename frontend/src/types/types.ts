@@ -89,3 +89,18 @@ export interface PendingRequest {
     avatarUrl: string;
   };
 }
+
+export interface Chat {
+  id: number;
+  updatedAt: string;
+  lastMessage: Message;
+  friend: User;
+}
+
+export interface Message {
+  id: number;
+  chatId: number;
+  senderId: number;
+  content: string;
+  createdAt: string;
+}
