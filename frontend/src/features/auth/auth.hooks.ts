@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type loginSchema, type registerSchema } from "./auth.schema";
 import { useAuthStore } from "./useAuthStore";
 import { api } from "@/api/api";
@@ -9,20 +9,23 @@ type LoginInput = z.infer<typeof loginSchema>;
 
 export const useRegisterMutation = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: RegisterInput) => {
       const response = await api.post("/auth/register", data);
       return response.data;
     },
-    onSuccess: (data) => {
-      setAuth(data.access_token);
+    onSuccess: async (data) => {
+      queryClient.clear();
+      await setAuth(data.access_token);
     },
   });
 };
 
 export const useLoginMutation = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: LoginInput) => {
@@ -30,6 +33,7 @@ export const useLoginMutation = () => {
       return response.data;
     },
     onSuccess: async (data) => {
+      queryClient.clear();
       await setAuth(data.access_token);
     },
   });

@@ -37,7 +37,8 @@ export class UsersController {
   }
 
   @Get(':identifier')
-  getProfileByUsername(
+  @UseGuards(JwtGuard)
+  getProfileByIdentifier(
     @CurrentUser('id') userId: number,
     @Param('identifier') identifier: string,
   ) {

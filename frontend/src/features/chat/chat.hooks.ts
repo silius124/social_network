@@ -32,6 +32,7 @@ export const useExistingChat = (friendId: number | null) => {
       const { data } = await api.get(`chats/find/${friendId}`);
       return data;
     },
+    enabled: !!friendId,
   });
 };
 

@@ -3,6 +3,8 @@ import { create } from "zustand";
 import { api } from "@/api/api";
 import type z from "zod";
 import type { updateProfileSchema } from "../profile/profile.schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { disconnectSocket } from "../chat/socket.service";
 
 interface User {
   id: number;
@@ -45,6 +47,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       logout: () => {
+        disconnectSocket();
         set({ token: null, user: null, isAuth: false });
       },
     }),

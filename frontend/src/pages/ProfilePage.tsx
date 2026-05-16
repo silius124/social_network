@@ -39,6 +39,7 @@ function ProfilePage() {
   if (!user)
     return <div className="text-center p-10">Пользователь не найден</div>;
 
+  console.log(user);
   const iAmRequester = user.requesterId === currentUser?.id;
 
   const friendActionConfig = {

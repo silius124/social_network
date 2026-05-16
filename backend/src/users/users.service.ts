@@ -6,6 +6,7 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async getProfile(id: number, username?: string, profileId?: number) {
+    console.log({ id, type: typeof id, profileId, type2: typeof profileId });
     const user = await this.prisma.user.findUnique({
       where: profileId ? { id: profileId } : { username },
       select: {
@@ -16,13 +17,18 @@ export class UsersService {
         avatarUrl: true,
         createdAt: true,
         _count: {
-          select: { posts: true, requesterUser: true, receiverUser: true },
+          select: {
+            posts: true,
+          },
         },
       },
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    if (user.id === id) return user;
+
     const friendShip = await this.prisma.friendShip.findFirst({
       where: {
         OR: [
@@ -36,12 +42,11 @@ export class UsersService {
         id: true,
       },
     });
-    if (friendShip) {
-      const { id: friendShipId, ...friendShipRest } = friendShip;
-      return { ...user, ...friendShipRest, friendShipId };
-    }
 
-    return user;
+    if (!friendShip) return user;
+
+    const { id: friendShipId, ...friendShipRest } = friendShip;
+    return { ...user, ...friendShipRest, friendShipId };
   }
 
   async getUserPosts(userId: number) {

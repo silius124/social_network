@@ -35,7 +35,6 @@ function LoginForm() {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     mutate(values, {
       onSuccess: () => {
-        console.log("Щас должен быть навигейт");
         navigate("/", { replace: true });
       },
     });

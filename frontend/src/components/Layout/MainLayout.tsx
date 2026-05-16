@@ -3,9 +3,11 @@ import { Link, Navigate, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
 import GlobalSearch from "../GlobalSearch";
 import NotificationBell from "@/features/notifications/components/NotificationBell";
+import { useQueryClient } from "@tanstack/react-query";
 
 function MainLayout() {
   const { isAuth, logout, user } = useAuthStore();
+  const queryClient = useQueryClient();
 
   if (!isAuth) {
     return <Navigate to="/login" replace />;
@@ -40,7 +42,10 @@ function MainLayout() {
               <Link to={`/profile/${user?.username}`}>{user?.username}</Link>
             </Button>
             <Button
-              onClick={logout}
+              onClick={() => {
+                queryClient.clear();
+                logout();
+              }}
               className="bg-destructive/20 text-destructive/60 border border-destructive/60 hover:bg-destructive hover:text-white"
             >
               Выйти

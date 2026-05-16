@@ -1,11 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CurrentUser } from 'src/auth/decorator/current-user.decorator';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
+  @UseGuards(JwtGuard)
   @Get('me')
   getNotification(@CurrentUser('id') userId: number) {
     return this.notificationsService.getMyNotification(userId);

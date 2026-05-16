@@ -33,21 +33,10 @@ function MessagesPage() {
   const { mutate: deleteChat } = useDeleteChat();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const navigate = useNavigate();
+
   const allMessages = useMemo<Message[]>(() => {
     const historyIds = new Set((history || []).map((m) => m.id));
     const uniqueNew = messages.filter((m) => !historyIds.has(m.id));
-    console.log(
-      "history:",
-      history?.map((m) => m.id),
-    );
-    console.log(
-      "messages:",
-      messages?.map((m) => m.id),
-    );
-    console.log(
-      "uniqueNew:",
-      uniqueNew?.map((m) => m.id),
-    );
     return [...(history || []), ...uniqueNew];
   }, [history, messages]);
 
@@ -59,12 +48,15 @@ function MessagesPage() {
     socket.on("chatCreated", ({ chatId }) => {
       setCurrentChatId(chatId);
       queryClient.invalidateQueries({ queryKey: ["chats"] });
+      queryClient.invalidateQueries({
+        queryKey: ["existingChat", friendIdFromUrl],
+      });
     });
 
     return () => {
       socket.off("chatCreated");
     };
-  }, [token, queryClient]);
+  }, [token, queryClient, friendIdFromUrl]);
 
   useEffect(() => {
     if (!token || !currentChatId) return;
@@ -135,48 +127,7 @@ function MessagesPage() {
       <div className="flex h-[calc(100vh-90px)] mt-4 gap-4">
         <Card className="overflow-y-auto p-2 mb-4">
           <h2 className="p-4 font-bold border-b text-center">Диалоги</h2>
-          {chats && chats.length ? (
-            chats?.map((chat: Chat) => (
-              <div
-                key={chat.id}
-                onClick={() => handleSelectChat(chat.id)}
-                className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition ${currentChatId === chat.id ? "bg-primary/10" : "hover:bg-slate-50"}`}
-              >
-                <Avatar>
-                  <AvatarImage
-                    src={`http://localhost:3000${chat?.friend?.avatarUrl}`}
-                  />
-                  <AvatarFallback>
-                    {chat?.friend?.username[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 truncate">
-                  <p className="text-sm font-semibold">
-                    {chat?.friend?.firstName} {chat?.friend?.lastName}
-                  </p>
-                  <p className="text-xs text-slate-500 truncate">
-                    {chat?.friend?.username}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="bg-destructive/20 text-destructive hover:bg-destructive/40 hover:text-destructive border border-destructive"
-                  onClick={() => {
-                    deleteChat(chat.id);
-                    setMessages([]);
-                    setCurrentChatId(null);
-                    setContent("");
-                    if (friendIdFromUrl) {
-                      navigate("/message");
-                    }
-                  }}
-                >
-                  <Trash />
-                </Button>
-              </div>
-            ))
-          ) : friendIdFromUrl ? (
+          {!!friendIdFromUrl && !existingChat && (
             <div
               key={friend?.id}
               className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition  "bg-primary/10"`}
@@ -198,7 +149,52 @@ function MessagesPage() {
                 </p>
               </div>
             </div>
-          ) : (
+          )}
+          {chats && chats.length > 0 && (
+            <>
+              {chats?.map((chat: Chat) => (
+                <div
+                  key={chat.id}
+                  onClick={() => handleSelectChat(chat.id)}
+                  className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition ${currentChatId === chat.id ? "bg-primary/10" : "hover:bg-slate-50"}`}
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={`http://localhost:3000${chat?.friend?.avatarUrl}`}
+                    />
+                    <AvatarFallback>
+                      {chat?.friend?.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 truncate">
+                    <p className="text-sm font-semibold">
+                      {chat?.friend?.firstName} {chat?.friend?.lastName}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {chat?.friend?.username}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="bg-destructive/20 text-destructive hover:bg-destructive/40 hover:text-destructive border border-destructive"
+                    onClick={() => {
+                      deleteChat(chat.id);
+                      setMessages([]);
+                      setCurrentChatId(null);
+                      setContent("");
+                      if (friendIdFromUrl) {
+                        navigate("/message");
+                      }
+                    }}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
+              ))}
+            </>
+          )}
+          {!friendIdFromUrl && !chats && (
             <p className="text-slate-400 mt-3">У вас нет диалогов</p>
           )}
         </Card>
@@ -209,6 +205,7 @@ function MessagesPage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {allMessages.map((msg, idx) => {
                   const isMe = msg.senderId == currentUser?.id;
+                  console.log({ isMe, msg, currentUser });
                   return (
                     <div
                       key={idx}
