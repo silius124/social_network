@@ -14,7 +14,7 @@ import {
   useSendFriendRequest,
 } from "@/features/friends/friends.hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Post } from "@/types/types";
 
 function ProfilePage() {
@@ -39,7 +39,6 @@ function ProfilePage() {
   if (!user)
     return <div className="text-center p-10">Пользователь не найден</div>;
 
-  console.log(user);
   const iAmRequester = user.requesterId === currentUser?.id;
 
   const friendActionConfig = {
@@ -126,11 +125,10 @@ function ProfilePage() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {user.status === "accepted" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate(`/message?friendId=${user.id}`)}
-                    >
-                      Написать сообщение
+                    <Button variant="outline">
+                      <Link to={`/message?friendId=${user.id}`}>
+                        Написать сообщение
+                      </Link>
                     </Button>
                   )}
                   <Button

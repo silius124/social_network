@@ -6,9 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useRespondToRequest } from "@/features/friends/friends.hook";
 import type { PendingRequest, User } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function FriendPage() {
+  const navigate = useNavigate();
   const { data: friends, isLoading: friendsLoading } = useQuery({
     queryKey: ["friends"],
     queryFn: async () => {
@@ -110,7 +111,9 @@ function FriendPage() {
                       </p>
                     </div>
                     <Button variant="ghost" size="sm">
-                      Написать
+                      <Link to={`/message?friendId=${friend.id}`}>
+                        Написать
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
