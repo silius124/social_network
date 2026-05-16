@@ -8,6 +8,8 @@ export const getSocket = (token: string) => {
       auth: { token },
       transports: ["websocket"],
     });
+  } else {
+    socket.auth = { token };
   }
 
   return socket;

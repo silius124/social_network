@@ -24,15 +24,15 @@ export class WsJwtGuard implements CanActivate {
       const payload = this.jwtService.verify(authToken);
 
       const user = await this.prisma.user.findUnique({
-        where: { id: payload.userId },
+        where: { id: payload.sub },
       });
 
       if (!user) throw new WsException('Unauthorized: User not found');
-
       client.data.user = { userId: user.id, username: user.username };
 
       return true;
     } catch (err) {
+      console.log('WsJwtGuard error:', err.message);
       throw new WsException('Unauthorized');
     }
   }

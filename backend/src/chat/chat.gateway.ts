@@ -12,13 +12,13 @@ import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
-    credential: true,
+    origin: 'http://localhost:5173',
+    credentials: true,
   },
 })
 export class ChatGateway {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   constructor(private chatService: ChatService) {}
 
@@ -36,7 +36,7 @@ export class ChatGateway {
     @MessageBody() data: { chatId: number },
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(`chat_${data.chatId}`);
+    await client.join(`chat_${data.chatId}`);
 
     const history = await this.chatService.getMessages(data.chatId);
     client.emit('chatHistory', history);
@@ -51,7 +51,7 @@ export class ChatGateway {
     data: { chatId?: number; friendId?: number; content: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const senderId: number = client.data.user.userId as number;
+    const senderId: number = client.data?.user?.userId as number;
 
     const message = await this.chatService.saveMessage(
       senderId,
@@ -61,12 +61,14 @@ export class ChatGateway {
     );
 
     const roomId = `chat_${message.chatId}`;
-    client.join(roomId);
-
-    this.server.to(`chat_${data.chatId}`).emit('newMessage', message);
 
     if (!data.chatId) {
-      client.emit('chatCreated', { chatId: message.chatId });
+      await client.join(roomId);
+      client.emit('chatCreated', message);
     }
+
+    await this.handleJoinRoom({ chatId: message.chatId }, client);
+
+    this.server.to(roomId).emit('newMessage', message);
   }
 }

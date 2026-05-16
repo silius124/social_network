@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -30,5 +31,10 @@ export class ChatController {
     @Param('friendId', ParseIntPipe) friendId: number,
   ) {
     return this.chatService.findExisitingChat(userId, friendId);
+  }
+
+  @Delete(':id')
+  deleteChat(@Param('id', ParseIntPipe) chatId: number) {
+    return this.chatService.delete(chatId);
   }
 }

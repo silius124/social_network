@@ -30,7 +30,7 @@ model User {
 model Post {
   id Int @id @default(autoincrement())
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   content String?
   imageUrl String?
   createdAt DateTime @default(now())
@@ -81,7 +81,7 @@ model PostLike {
 model CommentLike {
   id Int @id @default(autoincrement())
   commentId Int
-  comment Comment @relation(fields: [commentId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId Int
   user User @relation("UserLikeFromComment", fields: [userId], references: [id])
   createdAt DateTime @default(now())
@@ -115,7 +115,7 @@ model Chat {
 
 model ChatParticipants {
   chatId Int
-  chat Chat @relation("Paricipants",fields: [chatId], references: [id])
+  chat Chat @relation("Paricipants",fields: [chatId], references: [id], onDelete: Cascade)
   userId Int
   user User @relation("Chat", fields: [userId], references: [id])
   @@id([chatId, userId])
@@ -124,7 +124,7 @@ model ChatParticipants {
 model Messages {
   id Int @id @default(autoincrement())
   chatId Int
-  chat Chat @relation("Messages", fields: [chatId], references: [id])
+  chat Chat @relation("Messages", fields: [chatId], references: [id], onDelete: Cascade)
   senderId Int
   sender User @relation("Messages", fields: [senderId], references: [id])
   content String

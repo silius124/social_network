@@ -36,12 +36,17 @@ export class UsersController {
     return this.usersService.deleteAccount(userId);
   }
 
-  @Get(':username')
-  getProfile(
+  @Get(':identifier')
+  getProfileByUsername(
     @CurrentUser('id') userId: number,
-    @Param('username') username: string,
+    @Param('identifier') identifier: string,
   ) {
-    return this.usersService.getProfile(userId, username);
+    const profileId = Number(identifier);
+    if (profileId) {
+      return this.usersService.getProfile(userId, undefined, profileId);
+    } else {
+      return this.usersService.getProfile(userId, identifier);
+    }
   }
 
   @Get(':id/posts')

@@ -22,11 +22,11 @@ export const useUpdateProfle = () => {
   });
 };
 
-export const useUsersProfile = (username: string) => {
+export const useUsersProfile = (username?: string, id?: number) => {
   return useQuery({
-    queryKey: ["user", username],
+    queryKey: ["user", username, id],
     queryFn: async () => {
-      const { data } = await api.get(`/users/${username}`);
+      const { data } = await api.get(`/users/${username ? username : id}`);
       return data;
     },
   });

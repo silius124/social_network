@@ -24,13 +24,7 @@ export class ChatService {
     let targetChatId = chatId;
 
     if (!targetChatId && friendId) {
-      const chat = await this.prisma.chat.create({
-        data: {
-          participants: {
-            create: [{ userId: userId }, { userId: friendId }],
-          },
-        },
-      });
+      const chat = await this.createChat(userId, friendId);
       targetChatId = chat.id;
     }
 
@@ -93,5 +87,23 @@ export class ChatService {
       lastMessage: chat.messages[0] || null,
       friend: chat.participants[0]?.user || null,
     }));
+  }
+
+  async createChat(userId: number, friendId: number) {
+    return this.prisma.chat.create({
+      data: {
+        participants: {
+          create: [{ userId: userId }, { userId: friendId }],
+        },
+      },
+    });
+  }
+
+  async delete(chatId: number) {
+    return this.prisma.chat.delete({
+      where: {
+        id: chatId,
+      },
+    });
   }
 }

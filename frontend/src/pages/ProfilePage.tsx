@@ -14,7 +14,7 @@ import {
   useSendFriendRequest,
 } from "@/features/friends/friends.hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Post } from "@/types/types";
 
 function ProfilePage() {
@@ -29,6 +29,7 @@ function ProfilePage() {
   const { mutate: respondToRequest, isPending: isSendingRespond } =
     useRespondToRequest();
   const { mutate: deleteFriendShip } = useDeleteFriendShip();
+  const navigate = useNavigate();
 
   const isMyProfile = currentUser?.username === username;
 
@@ -81,6 +82,7 @@ function ProfilePage() {
           sendRequest(user.id);
         },
       };
+
   return (
     <Container>
       <Card className="my-8 border-none shadow-sm bg-white">
@@ -121,18 +123,28 @@ function ProfilePage() {
               {isMyProfile ? (
                 <EditProfileModal />
               ) : (
-                <Button
-                  onClick={config.action}
-                  disabled={
-                    config.disabled || isSendingRequest || isSendingRespond
-                  }
-                  variant={user.status === "accepted" && "destructive"}
-                  className={`${user.status === "accepted" ? "bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white" : ""}`}
-                >
-                  {isSendingRequest && isSendingRespond && !user.status
-                    ? "Отправка..."
-                    : config.label}
-                </Button>
+                <div className="flex flex-col gap-3">
+                  {user.status === "accepted" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate(`/message?friendId=${user.id}`)}
+                    >
+                      Написать сообщение
+                    </Button>
+                  )}
+                  <Button
+                    onClick={config.action}
+                    disabled={
+                      config.disabled || isSendingRequest || isSendingRespond
+                    }
+                    variant={user.status === "accepted" && "destructive"}
+                    className={`${user.status === "accepted" ? "bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white" : ""}`}
+                  >
+                    {isSendingRequest && isSendingRespond && !user.status
+                      ? "Отправка..."
+                      : config.label}
+                  </Button>
+                </div>
               )}
             </div>
           </div>

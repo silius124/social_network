@@ -1,13 +1,21 @@
-import { Container } from "@/components/Container";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuthStore } from "@/features/auth/useAuthStore";
-import { useChatMessages, useChats } from "@/features/chat/chat.hooks";
+import {
+  useChatMessages,
+  useChats,
+  useDeleteChat,
+  useExistingChat,
+} from "@/features/chat/chat.hooks";
 import { getSocket } from "@/features/chat/socket.service";
+import { useUsersProfile } from "@/features/profile/profile.hooks";
 import type { Chat, Message } from "@/types/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { Trash } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function MessagesPage() {
   const { token, user: currentUser } = useAuthStore();
@@ -17,11 +25,46 @@ function MessagesPage() {
   const [content, setContent] = useState<string>();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { data: history } = useChatMessages(currentChatId);
+  const [searchParam] = useSearchParams();
+  const friendIdFromUrl = Number(searchParam.get("friendId"));
+  const { data: existingChat } = useExistingChat(friendIdFromUrl);
+  const { data: friend } = useUsersProfile(undefined, friendIdFromUrl);
+  const queryClient = useQueryClient();
+  const { mutate: deleteChat } = useDeleteChat();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
+  const allMessages = useMemo<Message[]>(() => {
+    const historyIds = new Set((history || []).map((m) => m.id));
+    const uniqueNew = messages.filter((m) => !historyIds.has(m.id));
+    console.log(
+      "history:",
+      history?.map((m) => m.id),
+    );
+    console.log(
+      "messages:",
+      messages?.map((m) => m.id),
+    );
+    console.log(
+      "uniqueNew:",
+      uniqueNew?.map((m) => m.id),
+    );
+    return [...(history || []), ...uniqueNew];
+  }, [history, messages]);
 
-  const allMessages = useMemo<Message[]>(
-    () => [...(history || []), ...messages],
-    [history, messages],
-  );
+  useEffect(() => {
+    if (!token) return;
+
+    const socket = getSocket(token);
+
+    socket.on("chatCreated", ({ chatId }) => {
+      setCurrentChatId(chatId);
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    });
+
+    return () => {
+      socket.off("chatCreated");
+    };
+  }, [token, queryClient]);
 
   useEffect(() => {
     if (!token || !currentChatId) return;
@@ -34,68 +77,145 @@ function MessagesPage() {
       setMessages((prev) => [...prev, message]);
     });
 
+    socket.on("chatHistory", ({ chatId }) => {
+      queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+    });
+
     return () => {
       socket.off("newMessage");
+      socket.off("chatHistory");
       setMessages([]);
     };
-  }, [token, currentChatId]);
+  }, [token, currentChatId, queryClient]);
+
+  useEffect(() => {
+    setCurrentChatId(null);
+    setMessages([]);
+
+    if (existingChat?.id) {
+      setCurrentChatId(existingChat.id);
+    }
+  }, [existingChat]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allMessages]);
 
   const sendMessage = () => {
-    if (!token || !content?.trim() || !currentChatId) return;
+    if (!token || !content?.trim() || (!currentChatId && !friendIdFromUrl))
+      return;
 
     const socket = getSocket(token);
-    socket.emit("sendMessage", { chatId: currentChatId, content });
+    if (currentChatId) {
+      socket.emit("sendMessage", { chatId: currentChatId, content });
+    } else if (friendIdFromUrl) {
+      socket.emit("sendMessage", {
+        friendId: Number(friendIdFromUrl),
+        content,
+      });
+    }
+
     setContent("");
   };
 
+  useEffect(() => {
+    const el = textAreaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [content]);
+
+  const handleSelectChat = (id: number) => {
+    setMessages([]);
+    setCurrentChatId(id);
+  };
+
   return (
-    <Container>
-      <div className="flex h-[calc(100-80px)] mt-4 gap-4">
-        <Card className="w-1/3 overflow-y-auto p-2">
-          <h2 className="p-4 font-bold border-b">Диалоги</h2>
-          {chats?.map((chat: Chat) => (
+    <div className="max-w-5xl mx-auto">
+      <div className="flex h-[calc(100vh-90px)] mt-4 gap-4">
+        <Card className="overflow-y-auto p-2 mb-4">
+          <h2 className="p-4 font-bold border-b text-center">Диалоги</h2>
+          {chats && chats.length ? (
+            chats?.map((chat: Chat) => (
+              <div
+                key={chat.id}
+                onClick={() => handleSelectChat(chat.id)}
+                className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition ${currentChatId === chat.id ? "bg-primary/10" : "hover:bg-slate-50"}`}
+              >
+                <Avatar>
+                  <AvatarImage
+                    src={`http://localhost:3000${chat?.friend?.avatarUrl}`}
+                  />
+                  <AvatarFallback>
+                    {chat?.friend?.username[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 truncate">
+                  <p className="text-sm font-semibold">
+                    {chat?.friend?.firstName} {chat?.friend?.lastName}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">
+                    {chat?.friend?.username}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-destructive/20 text-destructive hover:bg-destructive/40 hover:text-destructive border border-destructive"
+                  onClick={() => {
+                    deleteChat(chat.id);
+                    setMessages([]);
+                    setCurrentChatId(null);
+                    setContent("");
+                    if (friendIdFromUrl) {
+                      navigate("/message");
+                    }
+                  }}
+                >
+                  <Trash />
+                </Button>
+              </div>
+            ))
+          ) : friendIdFromUrl ? (
             <div
-              key={chat.id}
-              onClick={() => setCurrentChatId(chat.id)}
-              className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition ${currentChatId === chat.id ? "bg-primary/10" : "hover:bg-slate-50"}`}
+              key={friend?.id}
+              className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition  "bg-primary/10"`}
             >
               <Avatar>
                 <AvatarImage
-                  src={`http://localhost:3000${chat?.friend?.avatarUrl}`}
+                  src={`http://localhost:3000${friend?.avatarUrl}`}
                 />
                 <AvatarFallback>
-                  {chat?.friend?.username[0].toUpperCase()}
+                  {friend?.username[0].toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 truncate">
                 <p className="text-sm font-semibold">
-                  {chat?.friend?.firstName} {chat?.friend?.lastName}
+                  {friend?.firstName} {friend?.lastName}
                 </p>
                 <p className="text-xs text-slate-500 truncate">
-                  {chat?.friend?.username}
+                  {friend?.username}
                 </p>
               </div>
             </div>
-          ))}
+          ) : (
+            <p className="text-slate-400 mt-3">У вас нет диалогов</p>
+          )}
         </Card>
 
-        <Card className="flex-1 flex flex-col overflow-hidden">
-          {currentChatId ? (
+        <Card className="flex-1 flex flex-col overflow-hidden mb-4">
+          {currentChatId || friendIdFromUrl ? (
             <>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {allMessages.map((msg, idx) => {
-                  const isMe = msg.senderId === currentUser?.id;
+                  const isMe = msg.senderId == currentUser?.id;
                   return (
                     <div
                       key={idx}
                       className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                     >
                       <div
-                        className={`max-w-[70%] p-3 rounded-2xl text-sm ${isMe ? "bg-primary text-white rounded-tr-none" : "bg-slate-100 rounded-tl-none"}`}
+                        className={`max-w-[70%] w-fit break-words p-3 rounded-2xl text-xl ${isMe ? "bg-primary text-white rounded-tr-none" : "bg-slate-100 rounded-tl-none"}`}
                       >
                         {msg.content}
                       </div>
@@ -104,18 +224,26 @@ function MessagesPage() {
                 })}
                 <div ref={scrollRef} />
               </div>
-              <div className="p-4 border-t flex gap-2">
-                <Input
+              <div className="p-4 border-t flex items-center gap-2">
+                <Textarea
+                  ref={textAreaRef}
                   value={content}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setContent(e.target.value)
                   }
-                  onKeyDown={(e: React.KeyboardEvent) =>
-                    e.key === "Enter" && sendMessage()
-                  }
+                  onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
                   placeholder="Введите сообщение..."
+                  rows={1}
+                  className="resize-none min-h-[40px] max-h-[120px] overflow-y-auto"
                 />
-                <Button onClick={sendMessage}>Отправить</Button>
+                <Button className="text-md" onClick={sendMessage}>
+                  Отправить
+                </Button>
               </div>
             </>
           ) : (
@@ -125,7 +253,7 @@ function MessagesPage() {
           )}
         </Card>
       </div>
-    </Container>
+    </div>
   );
 }
 
