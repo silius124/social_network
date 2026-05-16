@@ -34,7 +34,7 @@ function FriendPage() {
             <h2 className="text-xl">Заявки в друзья ({requests.length})</h2>
             <div className="grid gap-4">
               {requests.map((req: PendingRequest) => (
-                <Card key={req.id}>
+                <Card key={req.id} className="mb-3">
                   <CardContent className="p-4 flex items-center justify-between">
                     <Link
                       to={`/profile/${req.requesterUser.username}`}
@@ -88,7 +88,7 @@ function FriendPage() {
           {friends?.length > 0 ? (
             <div>
               {friends.map((friend: User) => (
-                <Card key={friend.id}>
+                <Card key={friend.id} className="mb-3">
                   <CardContent className="p-4 flex items-center gap-3">
                     <Avatar>
                       <AvatarImage
