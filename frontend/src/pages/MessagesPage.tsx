@@ -194,7 +194,7 @@ function MessagesPage() {
               ))}
             </>
           )}
-          {!friendIdFromUrl && !chats && (
+          {!friendIdFromUrl && chats?.length === 0 && (
             <p className="text-slate-400 mt-3">У вас нет диалогов</p>
           )}
         </Card>
