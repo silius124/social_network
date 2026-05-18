@@ -2,16 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateCommentDto } from './DTO/comments.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotificationGateway } from 'src/notifications/notification.gateway';
 
 @Injectable()
 export class CommentsService {
   constructor(
     private prisma: PrismaService,
     private notificationService: NotificationsService,
+    private notificationGateway: NotificationGateway,
   ) {}
 
   async create(userId: number, dto: CreateCommentDto) {
-    return this.prisma.comment.create({
+    const comment = await this.prisma.comment.create({
       data: {
         content: dto.content,
         postId: dto.postId,
@@ -19,8 +21,23 @@ export class CommentsService {
       },
       include: {
         user: { select: { username: true, avatarUrl: true } },
+        post: { select: { userId: true, id: true } },
       },
     });
+
+    if (userId !== comment.post.userId) {
+      const notification = await this.notificationService.create(
+        comment.post.userId,
+        'createComment',
+        comment.id,
+      );
+
+      this.notificationGateway.server
+        .to(`user_${comment.post.userId}`)
+        .emit('newNotification', notification);
+    }
+
+    return comment;
   }
 
   async toggleLike(userId: number, commentId: number) {
@@ -54,11 +71,14 @@ export class CommentsService {
     });
 
     if (comment.userId !== userId) {
-      await this.notificationService.create(
+      const notification = await this.notificationService.create(
         comment.userId,
         'likeToComment',
         commentId,
       );
+      this.notificationGateway.server
+        .to(`user_${comment.userId}`)
+        .emit('newNotification', notification);
     }
 
     return { liked: true };

@@ -18,10 +18,10 @@ export class NotificationsService {
       orderBy: { createdAt: 'desc' },
     });
     const countUnread = await this.prisma.notification.count({
-      where: { isRead: false },
+      where: { userId, isRead: false },
     });
 
-    return { notifications: [...notifications], countUnread: countUnread };
+    return { notifications: [...notifications], countUnread };
   }
 
   async readNotification(notifId: number) {

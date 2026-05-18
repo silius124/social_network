@@ -15,14 +15,11 @@ export class WsJwtGuard implements CanActivate {
       const client = context.switchToWs().getClient();
       const authToken = client.handshake.auth?.token;
 
-      console.log({ handshake: client.handshake, authToken });
-
       if (!authToken) {
         throw new WsException('Unauthorized: No taken provided');
       }
 
       const payload = this.jwtService.verify(authToken);
-      console.log(payload);
 
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },

@@ -9,10 +9,16 @@ import {
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import type { Notification } from "@/types/types";
+import { useEffect } from "react";
+import { getSocket } from "@/features/chat/socket.service";
+import { useAuthStore } from "@/features/auth/useAuthStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 function NotificationBell() {
   const { data: notifications } = useNotifications();
   const { mutate: markRead } = useMarkAsRead();
+  const { token } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const notificationType = {
     inviteToFriend: "У вас новый запрос в друзья",
@@ -20,6 +26,23 @@ function NotificationBell() {
     likeToComment: "Ваш комментарий понравился пользователю",
     acceptInviteToFriend: "Ваша заявка в друзья принята",
   };
+
+  useEffect(() => {
+    if (!token) return;
+    const client = getSocket(token);
+    client.connect();
+
+    client.on("newNotification", (notif) => {
+      queryClient.setQueriesData(["notifications"], (old: any) => [
+        notif,
+        ...old,
+      ]);
+    });
+
+    return () => {
+      client.off("newNotification");
+    };
+  }, []);
   return (
     <Dialog>
       <DialogTrigger asChild>

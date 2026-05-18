@@ -103,6 +103,7 @@ enum NotificationTypes {
   inviteToFriend
   likeToPost
   likeToComment
+  createComment
   acceptInviteToFriend
 }
 

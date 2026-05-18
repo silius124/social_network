@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { NotificationGateway } from 'src/notifications/notification.gateway';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -11,6 +12,7 @@ export class FriendsService {
   constructor(
     private prisma: PrismaService,
     private notificationService: NotificationsService,
+    private notificationGateway: NotificationGateway,
   ) {}
 
   async sendRequest(requesterId: number, receiverId: number) {
@@ -43,11 +45,14 @@ export class FriendsService {
       },
     });
 
-    await this.notificationService.create(
+    const notification = await this.notificationService.create(
       receiverId,
       'inviteToFriend',
       createfriendShip.id,
     );
+    this.notificationGateway.server
+      .to(`user_${receiverId}`)
+      .emit('newNotification', notification);
 
     return createfriendShip;
   }
@@ -73,11 +78,15 @@ export class FriendsService {
     });
 
     if (status === 'accepted') {
-      await this.notificationService.create(
+      const notification = await this.notificationService.create(
         request?.requesterId,
         'acceptInviteToFriend',
         requestId,
       );
+
+      this.notificationGateway.server
+        .to(`user_${request?.requesterId}`)
+        .emit('newNotification', notification);
     }
 
     return updatedFriendShip;

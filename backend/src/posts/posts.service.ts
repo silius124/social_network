@@ -6,12 +6,14 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/posts.dto';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { NotificationGateway } from 'src/notifications/notification.gateway';
 
 @Injectable()
 export class PostsService {
   constructor(
     private prisma: PrismaService,
     private notificationService: NotificationsService,
+    private notificationGateway: NotificationGateway,
   ) {}
 
   async create(userId: number, dto: CreatePostDto) {
@@ -71,7 +73,15 @@ export class PostsService {
     });
 
     if (post?.userId !== userId) {
-      await this.notificationService.create(userId, 'likeToPost', postId);
+      const notification = await this.notificationService.create(
+        post?.userId,
+        'likeToPost',
+        postId,
+      );
+
+      this.notificationGateway.server
+        .to(`user_${post?.userId}`)
+        .emit('newNotification', notification);
     }
 
     return { liked: true };

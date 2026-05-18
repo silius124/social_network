@@ -8,7 +8,6 @@ export const useNotifications = () => {
       const { data } = await api.get("/notifications/me");
       return data;
     },
-    refetchInterval: 30000,
   });
 };
 
