@@ -25,6 +25,7 @@ function NotificationBell() {
     likeToPost: "Ваш пост оценили",
     likeToComment: "Ваш комментарий понравился пользователю",
     acceptInviteToFriend: "Ваша заявка в друзья принята",
+    createComment: "Вам написали комментарий под постом",
   };
 
   useEffect(() => {
@@ -32,11 +33,8 @@ function NotificationBell() {
     const client = getSocket(token);
     client.connect();
 
-    client.on("newNotification", (notif) => {
-      queryClient.setQueriesData(["notifications"], (old: any) => [
-        notif,
-        ...old,
-      ]);
+    client.on("newNotification", () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     });
 
     return () => {

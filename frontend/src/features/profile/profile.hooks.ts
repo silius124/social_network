@@ -16,8 +16,12 @@ export const useUpdateProfle = () => {
     },
     onSuccess: (updatedData) => {
       updateProfileState(updatedData);
+      console.log(updatedData);
 
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+      });
     },
   });
 };

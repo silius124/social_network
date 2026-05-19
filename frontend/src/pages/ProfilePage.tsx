@@ -16,6 +16,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Post } from "@/types/types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -29,7 +39,6 @@ function ProfilePage() {
   const { mutate: respondToRequest, isPending: isSendingRespond } =
     useRespondToRequest();
   const { mutate: deleteFriendShip } = useDeleteFriendShip();
-  const navigate = useNavigate();
 
   const isMyProfile = currentUser?.username === username;
 
@@ -90,8 +99,8 @@ function ProfilePage() {
           <div className="flex flex-col md:flex-row items-center gap-6">
             <Avatar className="w-24 h-24 border-2 border-primary/10 rounded-full flex items-center justify-center bg-primary/5">
               <AvatarImage
-                src={`${user?.avatarUrl ? `http://localhost:3000${user?.avatarUrl}` : ""}`}
-                className="w-full h-full object-cover"
+                src={`${user?.avatarUrl ? `http://192.168.1.101:3000${user?.avatarUrl}` : ""}`}
+                className="w-full h-full object-cover rounded-full"
               />
               <AvatarFallback className="text-2xl text-primary ">
                 {user?.username?.[0].toUpperCase()}
@@ -124,25 +133,65 @@ function ProfilePage() {
                 <EditProfileModal />
               ) : (
                 <div className="flex flex-col gap-3">
-                  {user.status === "accepted" && (
-                    <Button variant="outline">
-                      <Link to={`/message?friendId=${user.id}`}>
-                        Написать сообщение
-                      </Link>
+                  {user.status === "accepted" ? (
+                    <>
+                      <Button variant="outline">
+                        <Link to={`/message?friendId=${user.id}`}>
+                          Написать сообщение
+                        </Link>
+                      </Button>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            disabled={
+                              config.disabled ||
+                              isSendingRequest ||
+                              isSendingRespond
+                            }
+                            variant={"destructive"}
+                            className="bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white"
+                          >
+                            {isSendingRequest &&
+                            isSendingRespond &&
+                            !user.status
+                              ? "Отправка..."
+                              : config.label}
+                          </Button>
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Вы уверены, что хотите удалить данного
+                              пользователя из друзей?
+                            </AlertDialogTitle>
+                          </AlertDialogHeader>
+
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Отмена</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={config.action}
+                              className="bg-destructive text-white hover:bg-destructive/30 hover:text-destructive/80 "
+                            >
+                              {config.label}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={config.action}
+                      disabled={
+                        config.disabled || isSendingRequest || isSendingRespond
+                      }
+                    >
+                      {isSendingRequest && isSendingRespond && !user.status
+                        ? "Отправка..."
+                        : config.label}
                     </Button>
                   )}
-                  <Button
-                    onClick={config.action}
-                    disabled={
-                      config.disabled || isSendingRequest || isSendingRespond
-                    }
-                    variant={user.status === "accepted" && "destructive"}
-                    className={`${user.status === "accepted" ? "bg-destructive/20 text-destructive/60 border border-destructive/60 hover:text-white" : ""}`}
-                  >
-                    {isSendingRequest && isSendingRespond && !user.status
-                      ? "Отправка..."
-                      : config.label}
-                  </Button>
                 </div>
               )}
             </div>

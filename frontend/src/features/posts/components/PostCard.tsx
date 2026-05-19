@@ -12,6 +12,18 @@ import { useAuthStore } from "@/features/auth/useAuthStore";
 import CommentSection from "@/features/comments/components/CommentSection";
 import { useState } from "react";
 import type { Post, PostLike } from "@/types/types";
+import { Link } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function PostCard({ post }: { post: Post }) {
   const [showComments, setShowComments] = useState<boolean>(false);
@@ -27,32 +39,61 @@ function PostCard({ post }: { post: Post }) {
     <>
       <Card className="my-4">
         <CardHeader className="flex flex-row items-center gap-3 p-4">
-          <Avatar>
-            <AvatarImage
-              src={`http://localhost:3000${post.user?.avatarUrl}`}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <AvatarFallback>
-              {post.user?.username[0].toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">
-              {post.user?.firstName} {post.user?.lastName}
-            </span>
-            <span className="text-xs text-slate-500">
-              @{post.user?.username}
-            </span>
-          </div>
+          <Link to={`/profile/${post.userId}`}>
+            <Avatar>
+              <AvatarImage
+                src={`http://192.168.1.101:3000${post.user?.avatarUrl}`}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <AvatarFallback>
+                {post.user?.username[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
+          <Link to={`/profile/${post.userId}`}>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">
+                {post.user?.firstName} {post.user?.lastName}
+              </span>
+              <span className="text-xs text-slate-500">
+                @{post.user?.username}
+              </span>
+            </div>
+          </Link>
+
           {isAuthor && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-slate-400 hover:text-destructive"
-              onClick={() => deletePost(post.id)}
-            >
-              <Trash2Icon className="h-4 w-4" />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-slate-400 hover:text-destructive"
+                >
+                  <Trash2Icon className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Вы уверены, что хотите удалить пост?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Это действие необратимо. Пост будет удален с сервера
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Отмена</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deletePost(post.id)}
+                    className="bg-destructive text-white hover:bg-destructive/30 hover:text-destructive/80"
+                  >
+                    Удалить
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </CardHeader>
 
@@ -60,10 +101,25 @@ function PostCard({ post }: { post: Post }) {
           <p className="text-sm mb-3">{post.content}</p>
           {post.imageUrl && (
             <img
-              src={`http://localhost:3000${post.imageUrl}`}
+              src={`http://192.168.1.101:3000${post.imageUrl}`}
               alt="Post content"
-              className="rounded-lg w-full object-cover mah-h-96"
+              loading="lazy"
+              className="rounded-lg w-full object-cover h-auto max-h-[500px]"
             />
+          )}
+          {post.videoUrl && (
+            <div className="rounded-lg overflow-hidden bg-black flex justify-center items-center">
+              <video
+                controls
+                className="w-full object-contain h-auto max-h-[900px]"
+                preload="metadata"
+              >
+                <source
+                  src={`http://192.168.1.101:3000/${post.videoUrl}`}
+                  type="video/mp4"
+                />
+              </video>
+            </div>
           )}
         </CardContent>
 

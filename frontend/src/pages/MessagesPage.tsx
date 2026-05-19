@@ -1,3 +1,14 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -118,7 +129,10 @@ function MessagesPage() {
   }, [content]);
 
   const handleSelectChat = (id: number) => {
+    if (currentChatId === id) return;
+    queryClient.invalidateQueries({ queryKey: ["messages"] });
     setMessages([]);
+
     setCurrentChatId(id);
   };
 
@@ -134,7 +148,7 @@ function MessagesPage() {
             >
               <Avatar>
                 <AvatarImage
-                  src={`http://localhost:3000${friend?.avatarUrl}`}
+                  src={`http://192.168.1.101:3000${friend?.avatarUrl}`}
                 />
                 <AvatarFallback>
                   {friend?.username[0].toUpperCase()}
@@ -160,7 +174,7 @@ function MessagesPage() {
                 >
                   <Avatar>
                     <AvatarImage
-                      src={`http://localhost:3000${chat?.friend?.avatarUrl}`}
+                      src={`http://192.168.1.101:3000${chat?.friend?.avatarUrl}`}
                     />
                     <AvatarFallback>
                       {chat?.friend?.username[0].toUpperCase()}
@@ -174,22 +188,48 @@ function MessagesPage() {
                       {chat?.friend?.username}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="bg-destructive/20 text-destructive hover:bg-destructive/40 hover:text-destructive border border-destructive"
-                    onClick={() => {
-                      deleteChat(chat.id);
-                      setMessages([]);
-                      setCurrentChatId(null);
-                      setContent("");
-                      if (friendIdFromUrl) {
-                        navigate("/message");
-                      }
-                    }}
-                  >
-                    <Trash />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="bg-destructive/20 text-destructive hover:bg-destructive/40 hover:text-destructive border border-destructive"
+                      >
+                        <Trash />
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Вы уверены, что хотите удалить чат?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Это действие необратимо. Чат будет удален с сервера
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Отмена</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            {
+                              deleteChat(chat.id);
+                              setMessages([]);
+                              setCurrentChatId(null);
+                              setContent("");
+                              if (friendIdFromUrl) {
+                                navigate("/message");
+                              }
+                            }
+                          }}
+                          className="bg-destructive text-white hover:bg-destructive/30 hover:text-destructive/80 "
+                        >
+                          Удалить
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               ))}
             </>

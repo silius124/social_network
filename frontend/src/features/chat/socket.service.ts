@@ -8,7 +8,7 @@ export const getSocket = (token: string) => {
     socket = null;
   }
   if (!socket) {
-    socket = io("http://localhost:3000", {
+    socket = io("http://192.168.1.101:3000", {
       auth: { token },
       transports: ["websocket"],
     });

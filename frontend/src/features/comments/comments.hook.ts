@@ -31,3 +31,5 @@ export const useCreateComment = () => {
     },
   });
 };
+
+export const useToggleLike = () => {};

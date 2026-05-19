@@ -24,15 +24,28 @@ export const useCreatePost = () => {
   return useMutation({
     mutationFn: async ({ content, file }: { content: string; file?: File }) => {
       let imageUrl = "";
+      let videoUrl = "";
 
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
-        const uploadRes = await api.post("/uploads/image", formData);
-        imageUrl = uploadRes.data.url;
+
+        const isVideo = file.type.startsWith("video/");
+
+        if (isVideo) {
+          const uploadRes = await api.post("/uploads/video", formData);
+          videoUrl = uploadRes.data.url;
+        } else {
+          const uploadRes = await api.post("/uploads/post-image", formData);
+          imageUrl = uploadRes.data.url;
+        }
       }
 
-      const response = await api.post("/posts", { content, imageUrl });
+      const response = await api.post("/posts", {
+        content,
+        imageUrl,
+        videoUrl,
+      });
       return response.data;
     },
     onSuccess: () => {

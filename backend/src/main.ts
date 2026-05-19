@@ -8,12 +8,26 @@ import * as express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
+  app.use(
+    '/uploads',
+    express.static(join(process.cwd(), 'uploads'), {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.gif'))
+          res.setHeader('Content-Type', 'image/gif');
+        if (filePath.endsWith('.mp4'))
+          res.setHeader('Content-Type', 'video/mp4');
+        if (filePath.endsWith('.webm'))
+          res.setHeader('Content-Type', 'video/webm');
+        if (filePath.endsWith('.mov'))
+          res.setHeader('Content-Type', 'video/quicktime');
+      },
+    }),
+  );
 
   app.use(helmet());
 
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'http://192.168.1.101:5173',
     credentials: true,
   });
 
@@ -27,7 +41,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  await app.listen(3000);
+  await app.listen(3000, '0.0.0.0');
 }
 
 bootstrap();

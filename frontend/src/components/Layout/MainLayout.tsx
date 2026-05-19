@@ -4,6 +4,16 @@ import { Button } from "../ui/button";
 import GlobalSearch from "../GlobalSearch";
 import NotificationBell from "@/features/notifications/components/NotificationBell";
 import { useQueryClient } from "@tanstack/react-query";
+import { AlertDialog } from "@radix-ui/react-alert-dialog";
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 function MainLayout() {
   const { isAuth, logout, user } = useAuthStore();
@@ -41,15 +51,34 @@ function MainLayout() {
             >
               <Link to={`/profile/${user?.username}`}>{user?.username}</Link>
             </Button>
-            <Button
-              onClick={() => {
-                queryClient.clear();
-                logout();
-              }}
-              className="bg-destructive/20 text-destructive/60 border border-destructive/60 hover:bg-destructive hover:text-white"
-            >
-              Выйти
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="bg-destructive/20 text-destructive/60 border border-destructive/60 hover:bg-destructive hover:text-white">
+                  Выйти
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Вы уверены, что хотите выйти из аккаунта?
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Отмена</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      queryClient.clear();
+                      logout();
+                    }}
+                    className="bg-destructive text-white hover:bg-destructive/30 hover:text-destructive/80 "
+                  >
+                    Выйти
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </header>

@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 
 function FriendPage() {
-  const navigate = useNavigate();
   const { data: friends, isLoading: friendsLoading } = useQuery({
     queryKey: ["friends"],
     queryFn: async () => {
@@ -43,7 +42,7 @@ function FriendPage() {
                     >
                       <Avatar>
                         <AvatarImage
-                          src={`http://localhost:3000${req.requesterUser.avatarUrl}`}
+                          src={`http://192.168.1.101:3000${req.requesterUser.avatarUrl}`}
                         />
                         <AvatarFallback>
                           {req.requesterUser.username[0].toUpperCase()}
@@ -93,7 +92,7 @@ function FriendPage() {
                   <CardContent className="p-4 flex items-center gap-3">
                     <Avatar>
                       <AvatarImage
-                        src={`http://localhost:3000${friend.avatarUrl}`}
+                        src={`http://192.168.1.101:3000${friend.avatarUrl}`}
                       />
                       <AvatarFallback>
                         {friend.username[0].toUpperCase()}

@@ -61,7 +61,7 @@ function CommentSection({ postId }: { postId: number }) {
                     </AvatarFallback>
                   </Avatar>
                 </Link>
-                <div className="  flex-1">
+                <div className="flex-1">
                   <Link to={`profile/${comment?.user?.username}`}>
                     <p className="font-semibold text-xs mb-1">
                       {comment?.user?.firstName} {comment?.user?.lastName}

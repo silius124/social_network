@@ -63,7 +63,7 @@ function GlobalSearch() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={`http://localhost:3000${user.avatarUrl}`}
+                    src={`http://192.168.1.101:3000${user.avatarUrl}`}
                     alt="Аватарка профиля"
                   />
                   <AvatarFallback>

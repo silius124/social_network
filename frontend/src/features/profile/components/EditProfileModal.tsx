@@ -50,7 +50,6 @@ function EditProfileModal() {
         ([_, value]) => value !== "" && value !== undefined,
       ),
     );
-    console.log(filteredValues);
     if (Object.keys(filteredValues).length === 0) {
       setOpen(false);
       return;
@@ -66,7 +65,7 @@ function EditProfileModal() {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-      const { data } = await api.post("/uploads/image", formData);
+      const { data } = await api.post("/uploads/avatar", formData);
       form.setValue("avatarUrl", data.url);
     }
   };

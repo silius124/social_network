@@ -40,7 +40,7 @@ function SearchPage() {
                 <CardContent className="p-4 flex items-center gap-4">
                   <Avatar>
                     <AvatarImage
-                      src={`http://localhost:3000${user.avatarUrl}`}
+                      src={`http://192.168.1.101:3000${user.avatarUrl}`}
                       alt="Аватарка профиля"
                     />
                     <AvatarFallback>
