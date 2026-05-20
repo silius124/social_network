@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Field, FieldDescription } from "@/components/ui/field";
 
 function LoginForm() {
   const { mutate, isPending, error } = useLoginMutation();
@@ -47,7 +48,7 @@ function LoginForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Вход в аккаунт</CardTitle>
+        <CardTitle>Войдите в свой аккаунт</CardTitle>
 
         {serverErrorMessage && (
           <CardDescription className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 border border-destructive/20 text-sm">
@@ -93,13 +94,18 @@ function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting}
-              >
-                {isPending ? "Вход" : "Войти"}
-              </Button>
+              <Field>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {isPending ? "Вход" : "Войти"}
+                </Button>
+                <FieldDescription>
+                  Нет аккаунта? <Link to={"/register"}>Зарегистрируйтесь</Link>
+                </FieldDescription>
+              </Field>
             </div>
           </form>
         </Form>
