@@ -139,16 +139,17 @@ function MessagesPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="flex h-[calc(100vh-90px)] mt-4 gap-4">
-        <Card className="overflow-y-auto p-2 mb-4">
+        <Card className="overflow-y-auto p-2 mb-4 max-w-[500px]">
           <h2 className="p-4 font-bold border-b text-center">Диалоги</h2>
           {!!friendIdFromUrl && !existingChat && (
             <div
               key={friend?.id}
-              className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition  "bg-primary/10"`}
+              className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition overflow-hidden  "bg-primary/10"`}
             >
-              <Avatar>
+              <Avatar className="h-13 w-13 border-2 border-primary/10 rounded-full flex items-center justify-center bg-primary/5">
                 <AvatarImage
                   src={`http://192.168.1.101:3000${friend?.avatarUrl}`}
+                  className="object-cover w-full h-full rounded-full"
                 />
                 <AvatarFallback>
                   {friend?.username[0].toUpperCase()}
@@ -172,9 +173,10 @@ function MessagesPage() {
                   onClick={() => handleSelectChat(chat.id)}
                   className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg transition ${currentChatId === chat.id ? "bg-primary/10" : "hover:bg-slate-50"}`}
                 >
-                  <Avatar>
+                  <Avatar className="w-13 h-13 border-2 border-primary/10 rounded-full flex items-center justify-center bg-primary/5">
                     <AvatarImage
                       src={`http://192.168.1.101:3000${chat?.friend?.avatarUrl}`}
+                      className="w-full h-full object-cover rounded-full"
                     />
                     <AvatarFallback>
                       {chat?.friend?.username[0].toUpperCase()}

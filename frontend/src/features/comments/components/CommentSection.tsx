@@ -52,9 +52,10 @@ function CommentSection({ postId }: { postId: number }) {
                 className="flex gap-2 items-start text-sm bg-slate-100 p-2 rounded-lg"
               >
                 <Link to={`profile/${comment?.user?.username}`}>
-                  <Avatar className="h-7 w-7">
+                  <Avatar className="h-10 w-10 rounded-full border-2 border-primary/10 bg-primary/5 overflow-hidden">
                     <AvatarImage
-                      src={`http://localhost:3000${comment?.user?.avatarUrl}`}
+                      src={`http://192.168.1.101:3000${comment?.user?.avatarUrl}`}
+                      className="w-full h-full object-cover rounded-full"
                     />
                     <AvatarFallback>
                       {comment?.user?.username[0].toUpperCase()}

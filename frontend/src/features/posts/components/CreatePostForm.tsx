@@ -82,7 +82,7 @@ function CreatePostForm() {
           <div className="flex flex-col gap-1">
             <Input
               type="file"
-              className="w-fit"
+              className="w-full"
               accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
               onChange={handleFileChange}
             />

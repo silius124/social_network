@@ -16,7 +16,6 @@ export const useUpdateProfle = () => {
     },
     onSuccess: (updatedData) => {
       updateProfileState(updatedData);
-      console.log(updatedData);
 
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({
@@ -30,7 +29,9 @@ export const useUsersProfile = (username?: string, id?: number) => {
   return useQuery({
     queryKey: ["user", username, id],
     queryFn: async () => {
-      const { data } = await api.get(`/users/${username ? username : id}`);
+      const { data } = await api.get(
+        `/users/${username ? String(username) : id}`,
+      );
       return data;
     },
     enabled: !!id || !!username,

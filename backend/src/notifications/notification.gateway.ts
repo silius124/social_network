@@ -59,6 +59,6 @@ export class NotificationGateway {
     }
   }
   handleDisconnect(client: Socket) {
-    console.log('Клиент отключился ', client.data.user.userId);
+    console.log('Клиент отключился ');
   }
 }

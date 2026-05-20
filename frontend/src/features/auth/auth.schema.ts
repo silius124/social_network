@@ -2,7 +2,10 @@ import * as z from "zod";
 
 export const registerSchema = z.object({
   email: z.string().email("Неверный формат почты"),
-  username: z.string().min(3, "Минимум 3 символа"),
+  username: z
+    .string()
+    .min(3, "Минимум 3 символа")
+    .regex(/^[^\d]/, "Никнейм не может начинаться с цифры"),
   password: z.string().min(6, "Пароль от 6 символов"),
   firstName: z.string().min(2, "Введите имя"),
   lastName: z.string().min(2, "Введите фамилию"),
