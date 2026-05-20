@@ -21,10 +21,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { useState } from "react";
+import { Frown, Smile } from "lucide-react";
 
 function RegisterForm() {
   const { mutate, isPending, error } = useRegisterMutation();
   const navigate = useNavigate();
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -38,6 +42,7 @@ function RegisterForm() {
   });
 
   const onSubmit = (values: z.infer<typeof registerSchema>) => {
+    if (confirmPassword !== form.getValues("password")) return;
     mutate(values, {
       onSuccess: () => {
         alert("Регистрация завершена");
@@ -137,6 +142,29 @@ function RegisterForm() {
                   </FormItem>
                 )}
               />
+
+              <Field>
+                <FieldLabel>Подтвердите пароль</FieldLabel>
+                <Input
+                  type="password"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setConfirmPassword(e.target.value);
+                  }}
+                  value={confirmPassword}
+                  placeholder="********"
+                />
+                <FieldDescription>
+                  {confirmPassword === form.getValues("password") ? (
+                    <p className="text-green-500 flex gap-1">
+                      Пароли совпадают <Smile size="20" />
+                    </p>
+                  ) : (
+                    <p className="text-destructive flex gap-1">
+                      Пароли не совпадают <Frown size="20" />
+                    </p>
+                  )}
+                </FieldDescription>
+              </Field>
 
               <Button
                 type="submit"
