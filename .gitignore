@@ -31,3 +31,5 @@ backend/dist/
 backend/.env
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+repomix-output.xml
