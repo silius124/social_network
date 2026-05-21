@@ -10,7 +10,7 @@ import type { Comment } from "@/types/types";
 function CommentSection({ postId }: { postId: number }) {
   const [content, setContent] = useState<string>();
   const { data: comments, isLoading } = useComments(postId);
-  const { mutate: createComment, isPending } = useCreateComment();
+  const { mutate: createComment, isPending } = useCreateComment(postId);
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
